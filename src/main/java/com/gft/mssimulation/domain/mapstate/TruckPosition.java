@@ -1,4 +1,4 @@
-package com.gft.mssimulation.domain.valueobjects;
+package com.gft.mssimulation.domain.mapstate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +9,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class WarehousePosition {
-    private UUID id;
-    private String name;
+public class TruckPosition {
+    private UUID truckId;
     private Location location;
-    private WarehouseType type;
 
 
 }
