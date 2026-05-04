@@ -79,8 +79,8 @@ flowchart TD
     B1 --> B2[Returns current positions of all elements]
 
     EV1([truck.position.updated.v1 received]) --> C1[Updates TruckPosition in MapState]
-    EV2([truck.registered.v1 received]) --> C4[Adds truck to map]
-    EV3([warehouse.registered.v1 received]) --> C4[Adds warehouse to map]
+    EV2([truck.registered.v1 received]) --> C2[Adds truck to map]
+    EV3([warehouse.registered.v1 received]) --> C3[Adds warehouse to map]
 ```
 
 ## Contracts with other microservices
