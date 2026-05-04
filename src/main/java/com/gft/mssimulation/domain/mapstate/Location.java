@@ -1,4 +1,4 @@
-package com.gft.mssimulation.domain.valueobjects;
+package com.gft.mssimulation.domain.mapstate;
 
 
 import lombok.AllArgsConstructor;

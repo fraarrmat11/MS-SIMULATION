@@ -1,5 +1,9 @@
 package com.gft.mssimulation.domain.valueobjects;
 
+import com.gft.mssimulation.domain.mapstate.Location;
+import com.gft.mssimulation.domain.mapstate.TruckPosition;
+import com.gft.mssimulation.domain.mapstate.WarehousePosition;
+import com.gft.mssimulation.domain.mapstate.WarehouseType;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
