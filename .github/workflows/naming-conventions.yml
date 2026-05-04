@@ -19,7 +19,7 @@ jobs:
           echo "Branch: $BRANCH"
           
           # Regex para validar el nombre de la rama
-          if ! echo "$BRANCH" | grep -qE '^(feature|fix|chore|docs|test|refactor)/[a-z0-9]+(-[a-z0-9]+)*$'; then
+          if ! echo "$BRANCH" | grep -qE '^(feature|feat|fix|chore|docs|test|refactor)/[a-z0-9]+(-[a-z0-9]+)*$'; then
             echo "Invalid branch name: $BRANCH"
             echo "Expected format: type/short-description"
             echo "Valid types: feature, fix, chore, docs, test, refactor"
@@ -48,7 +48,7 @@ jobs:
           # Extraer autor y mensaje usando un pipe como delimitador
           COMMITS_DATA=$(git log --format="%an|%s" $RANGE)
           
-          VALID_TYPES="feat|fix|chore|docs|test|refactor"
+          VALID_TYPES="feat|feature|fix|chore|docs|test|refactor"
           FAILED=0
 
           while IFS="|" read -r AUTHOR MSG; do

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 
 class ValueObjectsTest {
 
@@ -18,6 +20,20 @@ class ValueObjectsTest {
 
         assertThat(location.getX()).isEqualTo(10);
         assertThat(location.getY()).isEqualTo(20);
+    }
+
+    @Test
+    void createsLocationWithNegativeXEdge(){
+        assertThatThrownBy(() ->
+                new Location(-1, 1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createsLocationWithNegativeYEdge(){
+        assertThatThrownBy(() ->
+                new Location(1, -1))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
