@@ -51,10 +51,10 @@ classDiagram
 
     class WarehousePosition {
         <<value object>>
-        +UUID id
+        +UUID warehouseId
         +String name
         +Location location
-        +Type type
+        +WarehouseType type
     }
     class Location {
         <<value object>>
