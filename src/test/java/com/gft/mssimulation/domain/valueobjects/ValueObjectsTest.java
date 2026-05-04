@@ -1,0 +1,50 @@
+package com.gft.mssimulation.domain.valueobjects;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ValueObjectsTest {
+
+    @Test
+    void createsLocation() {
+        Location location = new Location(10, 20);
+
+        assertThat(location.getX()).isEqualTo(10);
+        assertThat(location.getY()).isEqualTo(20);
+    }
+
+    @Test
+    void createsTruckPosition() {
+        UUID truckId = UUID.randomUUID();
+        Location location = new Location(10, 20);
+
+        TruckPosition truckPosition = new TruckPosition(truckId, location);
+
+        assertThat(truckPosition.getTruckId()).isEqualTo(truckId);
+        assertThat(truckPosition.getLocation()).isSameAs(location);
+    }
+
+    @Test
+    void createsWarehousePosition() {
+        UUID warehouseId = UUID.randomUUID();
+        Location location = new Location(30, 40);
+
+        WarehousePosition warehousePosition = new WarehousePosition(
+                warehouseId,
+                "Factory 1",
+                location,
+                WarehouseType.FACTORY
+        );
+
+    }
+
+    @Test
+    void exposesWarehouseTypes() {
+        assertThat(WarehouseType.values())
+                .containsExactly(WarehouseType.FACTORY, WarehouseType.PRODUCTION, WarehouseType.CLIENT);
+        assertThat(WarehouseType.valueOf("FACTORY")).isEqualTo(WarehouseType.FACTORY);
+    }
+}
