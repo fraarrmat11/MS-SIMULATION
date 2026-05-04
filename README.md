@@ -37,9 +37,10 @@ classDiagram
 ```mermaid
 classDiagram
     class MapState {
-        List<TruckPosition> trucks
-        List<WarehousePosition> warehouses
+        List&ltTruckPosition&gt trucks
+        List&ltWarehousePosition&gt warehouses
         <<aggregate root>>
+        +registerTruck(TruckId)
         +updateTruckPosition(TruckPosition, TruckId)
         +registerWarehouse(warehouseId, name, location)
     }
@@ -78,6 +79,7 @@ flowchart TD
     B1 --> B2[Returns current positions of all elements]
 
     EV1([truck.position.updated.v1 received]) --> C1[Updates TruckPosition in MapState]
+    EV2([truck.registered.v1 received]) --> C4[Adds truck to map]
     EV3([warehouse.registered.v1 received]) --> C4[Adds warehouse to map]
 ```
 
@@ -85,7 +87,7 @@ flowchart TD
 
 | Microservice | Publishes | Consumes | Purpose |
 |---|---|---|---|
-| **Transport** | `time.advanced.v1` | `truck.position.updated.v1 (TruckPosition, TruckId)` | Transport uses the time advance event to move trucks. Time + Map uses Transport events to display trucks on the map and update their positions. |
+| **Transport** | `time.advanced.v1` | `truck.position.updated.v1 (TruckId, Location)`<br>`truck.registered.v1 (TruckId, Location)` | Transport uses the time advance event to move trucks. Time + Map uses Transport events to display trucks on the map and update their positions. |
 | **Production** | `time.advanced.v1` | `None` | Production uses the time advance event to progress production orders. |
-| **Warehouse** | `time.advanced.v1` | `warehouse.registered.v1 (WarehouseLocation)`<br>`warehouse.updated.v1 (WarehouseLocation)` *(optional)* | Warehouse may use the time advance event to check stock, consumption or replenishment needs. Time + Map uses Warehouse events to display warehouses on the map. |
+| **Warehouse** | `time.advanced.v1` | `warehouse.registered.v1 (UUID warehouseId, String name, Location location, WarehouseType warehouseType)` | Warehouse may use the time advance event to check stock, consumption or replenishment needs. Time + Map uses Warehouse events to display warehouses on the map. |
 | **Reporting** | `time.advanced.v1` | `None` | Reporting records time advances for history, monitoring and statistics. |
