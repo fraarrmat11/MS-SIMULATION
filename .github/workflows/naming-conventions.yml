@@ -1,0 +1,82 @@
+name: naming conventions
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-branch-name:
+    name: Check branch name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name
+        run: |
+          BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          echo "Branch: $BRANCH"
+          
+          # Regex para validar el nombre de la rama
+          if ! echo "$BRANCH" | grep -qE '^(feature|fix|chore|docs|test|refactor)/[a-z0-9]+(-[a-z0-9]+)*$'; then
+            echo "Invalid branch name: $BRANCH"
+            echo "Expected format: type/short-description"
+            echo "Valid types: feature, fix, chore, docs, test, refactor"
+            echo "Example: feature/truck-assignment"
+            exit 1
+          fi
+          echo "Branch name is valid"
+
+  check-commit-messages:
+    name: Check commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          # Definir el rango de commits a validar
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RANGE="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+          else
+            RANGE="-1"
+          fi
+
+          # Extraer autor y mensaje usando un pipe como delimitador
+          COMMITS_DATA=$(git log --format="%an|%s" $RANGE)
+          
+          VALID_TYPES="feat|fix|chore|docs|test|refactor"
+          FAILED=0
+
+          while IFS="|" read -r AUTHOR MSG; do
+            [ -z "$MSG" ] && continue
+
+            # 1. Ignorar bots (ej. github-actions[bot], dependabot[bot])
+            if [[ "$AUTHOR" == *"[bot]"* ]]; then
+              echo "✅ Skipping bot commit: $MSG (By: $AUTHOR)"
+              continue
+            fi
+
+            # 2. Ignorar mensajes de Merge automáticos de GitHub
+            if [[ "$MSG" =~ ^Merge\ .* ]]; then
+              echo "✅ Skipping merge commit: $MSG"
+              continue
+            fi
+
+            # 3. Validar formato semántico
+            echo "Checking: $MSG"
+            if ! echo "$MSG" | grep -qE "^($VALID_TYPES): .+"; then
+              echo "❌ Invalid commit message: $MSG"
+              echo "Expected format: type: description (Example: feat: add new logic)"
+              FAILED=1
+            fi
+          done <<< "$COMMITS_DATA"
+
+          if [ "$FAILED" = "1" ]; then
+            echo "Error: Some commits do not follow the naming convention."
+            exit 1
+          fi
+          echo "All relevant commits are valid"
