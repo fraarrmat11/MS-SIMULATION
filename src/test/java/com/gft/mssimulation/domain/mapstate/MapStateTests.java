@@ -1,0 +1,50 @@
+package com.gft.mssimulation.domain.mapstate;
+
+import org.junit.jupiter.api.Test;
+import java.util.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+public class MapStateTests {
+
+    MapState mapState = new MapState();
+
+    @Test
+    void registerTruck_WhenGivenCorrectArguments_ShouldWork(){
+        UUID truckId = UUID.randomUUID();
+        mapState.registerTruck(truckId,new Location(1,1));
+        assertThat(mapState.getTrucks().stream()
+                .anyMatch(truckPosition -> truckPosition.getTruckId().equals(truckId)));
+    }
+
+    @Test
+    void registerTruck_WhenGivenNegativeEdges_ShouldFail(){
+        assertThatThrownBy(() ->
+                mapState.registerTruck(UUID.randomUUID(),new Location(-1,-1)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void updateTruckPosition_WhenGivenCorrectArguments_ShouldWork(){
+        UUID truckId = UUID.randomUUID();
+        mapState.registerTruck(truckId,new Location(1,1));
+        mapState.updateTruckPosition(truckId, new Location(2,1));
+        assertThat(mapState.getTrucks().getFirst().getLocation().getX()).isEqualTo(2);
+    }
+
+    @Test
+    void updateTruckPosition_WhenGivenNonExistingTruckId_ShouldFail(){
+        assertThatThrownBy(() ->
+                mapState.updateTruckPosition(UUID.randomUUID(), new Location(1,1)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void updateTruckPosition_WhenGivenNegativeEdges_ShouldFail(){
+        UUID truckId = UUID.randomUUID();
+        mapState.registerTruck(truckId,new Location(1,1));
+        assertThatThrownBy(() ->
+                mapState.updateTruckPosition(UUID.randomUUID(), new Location(-1,-1)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+}
