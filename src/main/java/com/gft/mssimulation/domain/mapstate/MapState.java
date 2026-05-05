@@ -26,4 +26,8 @@ public class MapState {
         trucks.remove(truckPosition);
         registerTruck(truckId, location);
     }
+
+    public void registerWarehouse(UUID warehouseId, String name, Location location, WarehouseType warehouseType){
+        warehouses.add(new WarehousePosition(warehouseId, name, location, warehouseType));
+    }
 }
