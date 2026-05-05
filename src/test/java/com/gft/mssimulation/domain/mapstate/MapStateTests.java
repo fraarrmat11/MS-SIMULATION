@@ -12,9 +12,12 @@ public class MapStateTests {
     @Test
     void registerTruck_WhenGivenCorrectArguments_ShouldWork(){
         UUID truckId = UUID.randomUUID();
+        int initialSize = mapState.getTrucks().size();
         mapState.registerTruck(truckId,new Location(1,1));
-        assertThat(mapState.getTrucks().stream()
-                .anyMatch(truckPosition -> truckPosition.getTruckId().equals(truckId)));
+        assertThat(mapState.getTrucks())
+                .hasSize(initialSize + 1)
+                .extracting("truckId")
+                .contains(truckId);
     }
 
     @Test
@@ -45,6 +48,24 @@ public class MapStateTests {
         mapState.registerTruck(truckId,new Location(1,1));
         assertThatThrownBy(() ->
                 mapState.updateTruckPosition(UUID.randomUUID(), new Location(-1,-1)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void registerWarehouse_WhenGivenCorrectArguments_ShouldWork(){
+        UUID warehouseId = UUID.randomUUID();
+        int initialSize = mapState.getWarehouses().size();
+        mapState.registerWarehouse(warehouseId,"testWarehosue",new Location(1,1),WarehouseType.FACTORY);
+        assertThat(mapState.getWarehouses())
+                .hasSize(initialSize + 1)
+                .extracting("warehouseId")
+                .contains(warehouseId);
+    }
+
+    @Test
+    void registerWarehouse_WhenGivenNegativeEdges_ShouldFail(){
+        assertThatThrownBy(() -> mapState.registerWarehouse(
+                UUID.randomUUID(), "testWarehouse", new Location(-1,-1), WarehouseType.FACTORY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -1,6 +1,7 @@
 package com.gft.mssimulation.domain.mapstate;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,8 +10,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 public class WarehousePosition {
-    private UUID id;
+    private UUID warehouseId;
     private String name;
     private Location location;
     private WarehouseType type;
