@@ -13,7 +13,6 @@ class UpdateTruckPositionUseCaseTest {
     @Test
     void shouldUpdateTruckPositionInMapState() {
 
-        // GIVEN
         MapState mapState = new MapState();
         UUID truckId = UUID.randomUUID();
 
@@ -25,14 +24,12 @@ class UpdateTruckPositionUseCaseTest {
         UpdateTruckPositionUseCase useCase =
                 new UpdateTruckPositionUseCase(holder);
 
-        // WHEN
-        useCase.execute(truckId, new Location(2, 2));
+        useCase.execute(truckId, new Location(10, 10));
 
-        // THEN
         assertThat(holder.get().getTrucks())
                 .filteredOn(t -> t.getTruckId().equals(truckId))
                 .singleElement()
                 .extracting(t -> t.getLocation().getX())
-                .isEqualTo(2);
+                .isEqualTo(10);
     }
 }
