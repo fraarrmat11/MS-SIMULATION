@@ -1,3 +1,14 @@
 spring:
   application:
     name: MS-SIMULATION
+  liquibase:
+    enabled: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ms-simulation-db
+    username: admin
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
