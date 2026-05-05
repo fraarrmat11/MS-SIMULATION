@@ -1,5 +1,9 @@
-package com.gft.mssimulation.domain.mapstate;
+package com.gft.mssimulation.application.mapstate;
 
+import com.gft.mssimulation.domain.mapstate.MapState;
+import org.springframework.stereotype.Service;
+
+@Service
 public class MapStateHolder {
 
     private MapState mapState;

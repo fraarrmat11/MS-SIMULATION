@@ -1,7 +1,6 @@
 package com.gft.mssimulation.application.mapstate;
 
 import com.gft.mssimulation.domain.mapstate.Location;
-import com.gft.mssimulation.domain.mapstate.MapStateHolder;
 
 public class UpdateTruckPositionUseCase {
 

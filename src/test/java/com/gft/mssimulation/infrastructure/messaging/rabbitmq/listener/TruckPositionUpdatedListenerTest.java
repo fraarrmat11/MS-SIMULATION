@@ -1,17 +1,18 @@
-package com.gft.mssimulation.application.mapstate;
+package com.gft.mssimulation.infrastructure.messaging.rabbitmq.listener;
 
 import com.gft.mssimulation.domain.mapstate.Location;
 import com.gft.mssimulation.domain.mapstate.MapState;
+import com.gft.mssimulation.application.mapstate.MapStateHolder;
+import com.gft.mssimulation.infrastructure.messaging.rabbitmq.message.TruckPositionUpdatedEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UpdateTruckPositionUseCaseTest {
-
+public class TruckPositionUpdatedListenerTest {
     @Test
-    void shouldUpdateTruckPositionInMapState() {
+    void shouldUpdateTruckPositionWhenEventReceived() {
 
         // GIVEN
         MapState mapState = new MapState();
@@ -22,17 +23,20 @@ class UpdateTruckPositionUseCaseTest {
         MapStateHolder holder = new MapStateHolder();
         holder.set(mapState);
 
-        UpdateTruckPositionUseCase useCase =
-                new UpdateTruckPositionUseCase(holder);
+        TruckPositionUpdatedListener listener =
+                new TruckPositionUpdatedListener(holder);
+
+        TruckPositionUpdatedEvent event =
+                new TruckPositionUpdatedEvent(truckId, new Location(5, 5));
 
         // WHEN
-        useCase.execute(truckId, new Location(2, 2));
+        listener.onEvent(event);
 
         // THEN
         assertThat(holder.get().getTrucks())
                 .filteredOn(t -> t.getTruckId().equals(truckId))
                 .singleElement()
                 .extracting(t -> t.getLocation().getX())
-                .isEqualTo(2);
+                .isEqualTo(5);
     }
 }
