@@ -14,9 +14,10 @@ public class MapStateTests {
         UUID truckId = UUID.randomUUID();
         int initialSize = mapState.getTrucks().size();
         mapState.registerTruck(truckId,new Location(1,1));
-        assertThat(mapState.getTrucks().stream()
-                .anyMatch(truckPosition -> truckPosition.getTruckId().equals(truckId))).isTrue();
-        assertThat(mapState.getTrucks().size()).isEqualTo(initialSize + 1);
+        assertThat(mapState.getTrucks())
+                .hasSize(initialSize + 1)
+                .extracting("truckId")
+                .contains(truckId);
     }
 
     @Test
@@ -55,9 +56,10 @@ public class MapStateTests {
         UUID warehouseId = UUID.randomUUID();
         int initialSize = mapState.getWarehouses().size();
         mapState.registerWarehouse(warehouseId,"testWarehosue",new Location(1,1),WarehouseType.FACTORY);
-        assertThat(mapState.getWarehouses().stream()
-                .anyMatch(warehousePosition -> warehousePosition.getWarehouseId().equals(warehouseId))).isTrue();
-        assertThat(mapState.getWarehouses().size()).isEqualTo(initialSize + 1);
+        assertThat(mapState.getWarehouses())
+                .hasSize(initialSize + 1)
+                .extracting("warehouseId")
+                .contains(warehouseId);
     }
 
     @Test
