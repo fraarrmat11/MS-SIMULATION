@@ -6,9 +6,11 @@ import com.gft.mssimulation.application.simulationclock.command.AdvanceTimeComma
 import com.gft.mssimulation.application.simulationclock.result.TimeAdvancedResult;
 import com.gft.mssimulation.domain.simulationclock.SimulationClock;
 import com.gft.mssimulation.domain.simulationclock.TimeAdvancedEvent;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Service
 public class AdvanceTimeService implements AdvanceTimeUseCase {
 
     private final SimulationClockRepository simulationClockRepository;
