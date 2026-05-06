@@ -1,20 +1,20 @@
 package com.gft.mssimulation.infrastructure.messaging.rabbitmq.listener;
 
 import com.gft.mssimulation.application.mapstate.MapStateHolder;
-import com.gft.mssimulation.application.mapstate.UpdateTruckPositionUseCase;
-import com.gft.mssimulation.infrastructure.messaging.rabbitmq.message.TruckPositionUpdatedEvent;
+import com.gft.mssimulation.application.mapstate.RegisterTruckUseCase;
+import com.gft.mssimulation.infrastructure.messaging.rabbitmq.message.TruckRegisteredEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-@Component
 @AllArgsConstructor
-public class TruckPositionUpdatedListener {
+@Component
+public class TruckRegisteredListener {
 
-    private final UpdateTruckPositionUseCase useCase;
+    private final RegisterTruckUseCase useCase;
 
-    @RabbitListener(queues = "truck.position.updated.v1")
-    public void onEvent(TruckPositionUpdatedEvent event) {
+    @RabbitListener(queues = "truck.registered.v1")
+    public void onEvent(TruckRegisteredEvent event){
         useCase.execute(
                 event.getTruckId(),
                 event.getLocation()

@@ -3,10 +3,11 @@ package com.gft.mssimulation.application.mapstate;
 import com.gft.mssimulation.domain.mapstate.Location;
 import com.gft.mssimulation.domain.mapstate.MapState;
 import org.junit.jupiter.api.Test;
-
+import com.gft.mssimulation.domain.mapstate.*;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UpdateTruckPositionUseCaseTest {
 
@@ -26,13 +27,33 @@ class UpdateTruckPositionUseCaseTest {
                 new UpdateTruckPositionUseCase(holder);
 
         // WHEN
-        useCase.execute(truckId, new Location(2, 2));
+        useCase.execute(truckId, new Location(10, 20));
 
         // THEN
-        assertThat(holder.get().getTrucks())
-                .filteredOn(t -> t.getTruckId().equals(truckId))
-                .singleElement()
-                .extracting(t -> t.getLocation().getX())
-                .isEqualTo(2);
+        TruckPosition updated = holder.get().getTrucks().stream()
+                .filter(t -> t.getTruckId().equals(truckId))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(updated.getLocation().getX()).isEqualTo(10);
+        assertThat(updated.getLocation().getY()).isEqualTo(20);
+    }
+
+    @Test
+    void shouldThrowIfTruckDoesNotExist() {
+
+        MapState mapState = new MapState();
+
+        MapStateHolder holder = new MapStateHolder();
+        holder.set(mapState);
+
+        UpdateTruckPositionUseCase useCase =
+                new UpdateTruckPositionUseCase(holder);
+
+        UUID unknownTruckId = UUID.randomUUID();
+
+        assertThatThrownBy(() ->
+                useCase.execute(unknownTruckId, new Location(1, 1))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 }

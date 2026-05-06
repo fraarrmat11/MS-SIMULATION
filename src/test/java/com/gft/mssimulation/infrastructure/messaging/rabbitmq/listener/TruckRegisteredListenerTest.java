@@ -1,8 +1,8 @@
 package com.gft.mssimulation.infrastructure.messaging.rabbitmq.listener;
 
-import com.gft.mssimulation.application.mapstate.UpdateTruckPositionUseCase;
+import com.gft.mssimulation.application.mapstate.RegisterTruckUseCase;
 import com.gft.mssimulation.domain.mapstate.Location;
-import com.gft.mssimulation.infrastructure.messaging.rabbitmq.message.TruckPositionUpdatedEvent;
+import com.gft.mssimulation.infrastructure.messaging.rabbitmq.message.TruckRegisteredEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,18 +14,17 @@ import java.util.UUID;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TruckPositionUpdatedListenerTest {
+class TruckRegisteredListenerTest {
 
     @Mock
-    private UpdateTruckPositionUseCase useCase;
+    private RegisterTruckUseCase useCase;
 
     @InjectMocks
-    private TruckPositionUpdatedListener listener;
+    private TruckRegisteredListener listener;
 
     @Test
     void shouldDelegateToUseCase() {
-        TruckPositionUpdatedEvent event =
-                new TruckPositionUpdatedEvent(UUID.randomUUID(), new Location(1,1));
+        TruckRegisteredEvent event = new TruckRegisteredEvent(UUID.randomUUID(), new Location(1,1));
 
         listener.onEvent(event);
 
