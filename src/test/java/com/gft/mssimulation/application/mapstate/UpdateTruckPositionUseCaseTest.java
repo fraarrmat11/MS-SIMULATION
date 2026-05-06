@@ -15,7 +15,6 @@ class UpdateTruckPositionUseCaseTest {
     @Test
     void shouldUpdateTruckPositionInMapState() {
 
-        // GIVEN
         MapState mapState = new MapState();
         UUID truckId = UUID.randomUUID();
 
