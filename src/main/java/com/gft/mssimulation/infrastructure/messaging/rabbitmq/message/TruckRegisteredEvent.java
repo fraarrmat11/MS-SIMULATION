@@ -6,9 +6,12 @@ import lombok.Getter;
 
 import java.util.UUID;
 
-@Getter
 @AllArgsConstructor
-public class TruckPositionUpdatedEvent {
-    private UUID truckId;
-    private Location location;
+@Getter
+public class TruckRegisteredEvent {
+    UUID truckId;
+    Location location;
+
+
+
 }

@@ -8,11 +8,11 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UpdateTruckPositionUseCase {
+public class RegisterTruckUseCase {
 
     private final MapStateHolder holder;
 
-    public void execute(UUID truckId, Location location) {
-        holder.get().updateTruckPosition(truckId, location);
+    public void execute(UUID truckId, Location location){
+        holder.get().registerTruck(truckId, location);
     }
 }
