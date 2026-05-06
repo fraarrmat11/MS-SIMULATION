@@ -10,7 +10,7 @@ public class WarehouseRegisteredListener {
 
     private final RegisterWarehouseUseCase useCase;
 
-    @RabbitListener(queues = "register.warehouse.v1")
+    @RabbitListener(queues = "warehouse.registered.v1")
     void onEvent(WarehouseRegisteredEvent event){
         useCase.execute(
                 event.getWarehouseId(),
