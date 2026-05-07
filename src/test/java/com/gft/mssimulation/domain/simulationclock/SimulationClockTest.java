@@ -8,29 +8,29 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class SimulationClockTest {
 
     @Test
-    void initial_WhenCalled_ShouldCreateClockAtDayZero() {
-        SimulationClock simulationClock = SimulationClock.initial();
+    void startingAtDayZero_WhenCalled_ShouldCreateClockAtDayZero() {
+        SimulationClock simulationClock = SimulationClock.startingAtDayZero();
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isZero();
     }
 
     @Test
-    void of_WhenGivenCurrentSimulationDay_ShouldCreateClock() {
-        SimulationClock simulationClock = SimulationClock.of(SimulationDay.of(8));
+    void fromCurrentDay_WhenGivenCurrentSimulationDay_ShouldCreateClock() {
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(8));
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(8);
     }
 
     @Test
-    void of_WhenGivenNullCurrentDay_ShouldThrowException() {
-        assertThatThrownBy(() -> SimulationClock.of(null))
+    void fromCurrentDay_WhenGivenNullCurrentDay_ShouldThrowException() {
+        assertThatThrownBy(() -> SimulationClock.fromCurrentDay(null))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("currentDay cannot be null");
     }
 
     @Test
     void advanceDay_WhenGivenOneDay_ShouldUpdateCurrentDayAndReturnTimeAdvancedEvent() {
-        SimulationClock simulationClock = SimulationClock.initial();
+        SimulationClock simulationClock = SimulationClock.startingAtDayZero();
 
         TimeAdvancedEvent event = simulationClock.advanceDay(1);
 
@@ -44,7 +44,7 @@ class SimulationClockTest {
 
     @Test
     void advanceDay_WhenGivenSeveralDays_ShouldUpdateCurrentDayAndReturnTimeAdvancedEvent() {
-        SimulationClock simulationClock = SimulationClock.of(SimulationDay.of(5));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(5));
 
         TimeAdvancedEvent event = simulationClock.advanceDay(3);
 
@@ -56,7 +56,7 @@ class SimulationClockTest {
 
     @Test
     void advanceDay_WhenCalledMultipleTimes_ShouldAdvanceFromLatestCurrentDay() {
-        SimulationClock simulationClock = SimulationClock.initial();
+        SimulationClock simulationClock = SimulationClock.startingAtDayZero();
 
         TimeAdvancedEvent firstEvent = simulationClock.advanceDay(2);
         TimeAdvancedEvent secondEvent = simulationClock.advanceDay(3);
@@ -70,7 +70,7 @@ class SimulationClockTest {
 
     @Test
     void advanceDay_WhenGivenInvalidDays_ShouldThrowExceptionWithoutChangingCurrentDay() {
-        SimulationClock simulationClock = SimulationClock.of(SimulationDay.of(4));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(4));
 
         assertThatThrownBy(() -> simulationClock.advanceDay(0))
                 .isInstanceOf(IllegalArgumentException.class)

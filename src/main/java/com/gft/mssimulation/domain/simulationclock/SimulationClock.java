@@ -10,11 +10,11 @@ public final class SimulationClock {
         this.currentDay = Objects.requireNonNull(currentDay, "currentDay cannot be null");
     }
 
-    public static SimulationClock initial() {
+    public static SimulationClock startingAtDayZero() {
         return new SimulationClock(SimulationDay.zero());
     }
 
-    public static SimulationClock of(SimulationDay currentDay) {
+    public static SimulationClock fromCurrentDay(SimulationDay currentDay) {
         return new SimulationClock(currentDay);
     }
 
