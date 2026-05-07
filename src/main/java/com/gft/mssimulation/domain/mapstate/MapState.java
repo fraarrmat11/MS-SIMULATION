@@ -16,6 +16,9 @@ public class MapState {
     List<WarehousePosition> warehouses = new ArrayList<>();
 
     public void registerTruck(UUID truckId, Location location){
+        if (this.trucks.stream().anyMatch(truckPosition -> truckPosition.getTruckId().equals(truckId))){
+            throw new IllegalArgumentException("Truck is already registered");
+        }
         trucks.add(new TruckPosition(truckId, location));
     }
 
