@@ -5,7 +5,12 @@ spring:
     username: sa
     password:
   jpa:
+    defer-datasource-initialization: false
     hibernate:
       ddl-auto: none
   liquibase:
     enabled: false
+  sql:
+    init:
+      mode: always
+

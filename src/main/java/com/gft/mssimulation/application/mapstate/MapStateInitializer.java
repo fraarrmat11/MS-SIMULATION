@@ -2,6 +2,7 @@ package com.gft.mssimulation.application.mapstate;
 
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
