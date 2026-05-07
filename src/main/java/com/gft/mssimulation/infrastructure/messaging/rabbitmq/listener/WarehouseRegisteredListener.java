@@ -4,7 +4,9 @@ import com.gft.mssimulation.application.mapstate.RegisterWarehouseUseCase;
 import com.gft.mssimulation.infrastructure.messaging.rabbitmq.message.WarehouseRegisteredEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
 
+@Component
 @AllArgsConstructor
 public class WarehouseRegisteredListener {
 
