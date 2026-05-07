@@ -1,7 +1,6 @@
 package com.gft.mssimulation.application.simulationclock.result;
 
 import com.gft.mssimulation.domain.simulationclock.TimeAdvancedEvent;
-
 import java.time.Instant;
 import java.util.UUID;
 

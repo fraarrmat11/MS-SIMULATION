@@ -53,7 +53,7 @@ class SimulationClockJpaAdapterTest {
 
     @Test
     void save_WhenClockDoesNotExist_ShouldCreateAndSaveEntityWithCurrentDay() {
-        SimulationClock simulationClock = SimulationClock.of(SimulationDay.of(4));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(4));
         when(repository.findById(SimulationClockJpaAdapter.SIMULATION_CLOCK_ID)).thenReturn(Optional.empty());
 
         adapter.save(simulationClock);
@@ -71,7 +71,7 @@ class SimulationClockJpaAdapterTest {
     @Test
     void save_WhenClockAlreadyExists_ShouldUpdateAndSaveExistingEntity() {
         SimulationClockEntity entity = new SimulationClockEntity(1L, 2);
-        SimulationClock simulationClock = SimulationClock.of(SimulationDay.of(9));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(9));
         when(repository.findById(SimulationClockJpaAdapter.SIMULATION_CLOCK_ID)).thenReturn(Optional.of(entity));
 
         adapter.save(simulationClock);
