@@ -21,7 +21,7 @@ public class SimulationClockJpaAdapter implements SimulationClockRepository {
     @Override
     public SimulationClock load() {
         return repository.findById(SIMULATION_CLOCK_ID)
-                .map(entity -> SimulationClock.fromCurrentDay(SimulationDay.of(entity.getCurrentDay())))
+                .map(entity -> SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(entity.getCurrentDay())))
                 .orElseGet(SimulationClock::startingAtDayZero);
     }
 

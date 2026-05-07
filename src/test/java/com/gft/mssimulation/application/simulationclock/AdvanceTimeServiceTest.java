@@ -68,7 +68,7 @@ class AdvanceTimeServiceTest {
 
     @Test
     void advanceTime_WhenGivenSeveralDays_ShouldAdvanceFromLoadedClockCurrentDay() {
-        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(4));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(4));
         when(simulationClockRepository.load()).thenReturn(simulationClock);
 
         TimeAdvancedResult result = advanceTimeService.advanceTime(new AdvanceTimeCommand(3));
@@ -86,7 +86,7 @@ class AdvanceTimeServiceTest {
 
     @Test
     void advanceTime_WhenGivenZeroDays_ShouldThrowExceptionWithoutSavingNorPublishing() {
-        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(5));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(5));
         when(simulationClockRepository.load()).thenReturn(simulationClock);
 
         assertThatThrownBy(() -> advanceTimeService.advanceTime(new AdvanceTimeCommand(0)))
@@ -102,7 +102,7 @@ class AdvanceTimeServiceTest {
 
     @Test
     void advanceTime_WhenGivenNegativeDays_ShouldThrowExceptionWithoutSavingNorPublishing() {
-        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(5));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(5));
         when(simulationClockRepository.load()).thenReturn(simulationClock);
 
         assertThatThrownBy(() -> advanceTimeService.advanceTime(new AdvanceTimeCommand(-1)))

@@ -13,11 +13,11 @@ public final class SimulationDay {
         this.dayNumber = dayNumber;
     }
 
-    public static SimulationDay zero() {
+    public static SimulationDay dayZero() {
         return new SimulationDay(INITIAL_SIMULATION_DAY_NUMBER);
     }
 
-    public static SimulationDay of(int dayNumber) {
+    public static SimulationDay fromDayNumber(int dayNumber) {
         return new SimulationDay(dayNumber);
     }
 
