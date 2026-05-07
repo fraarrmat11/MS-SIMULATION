@@ -8,29 +8,29 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class SimulationDayTest {
 
     @Test
-    void zero_WhenCalled_ShouldCreateInitialSimulationDayAtZero() {
-        SimulationDay simulationDay = SimulationDay.zero();
+    void dayZero_WhenCalled_ShouldCreateInitialSimulationDayAtZero() {
+        SimulationDay simulationDay = SimulationDay.dayZero();
 
         assertThat(simulationDay.dayNumber()).isZero();
     }
 
     @Test
-    void of_WhenGivenCorrectDayNumber_ShouldCreateSimulationDay() {
-        SimulationDay simulationDay = SimulationDay.of(7);
+    void fromDayNumber_WhenGivenCorrectDayNumber_ShouldCreateSimulationDay() {
+        SimulationDay simulationDay = SimulationDay.fromDayNumber(7);
 
         assertThat(simulationDay.dayNumber()).isEqualTo(7);
     }
 
     @Test
-    void of_WhenGivenNegativeDayNumber_ShouldThrowException() {
-        assertThatThrownBy(() -> SimulationDay.of(-1))
+    void fromDayNumber_WhenGivenNegativeDayNumber_ShouldThrowException() {
+        assertThatThrownBy(() -> SimulationDay.fromDayNumber(-1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Simulation day cannot be negative");
     }
 
     @Test
     void advanceBy_WhenGivenPositiveDays_ShouldReturnAdvancedSimulationDay() {
-        SimulationDay simulationDay = SimulationDay.of(3);
+        SimulationDay simulationDay = SimulationDay.fromDayNumber(3);
 
         SimulationDay advancedDay = simulationDay.advanceBy(4);
 
@@ -39,7 +39,7 @@ class SimulationDayTest {
 
     @Test
     void advanceBy_WhenGivenPositiveDays_ShouldKeepOriginalSimulationDayUnchanged() {
-        SimulationDay simulationDay = SimulationDay.of(3);
+        SimulationDay simulationDay = SimulationDay.fromDayNumber(3);
 
         SimulationDay advancedDay = simulationDay.advanceBy(4);
 
@@ -49,7 +49,7 @@ class SimulationDayTest {
 
     @Test
     void advanceBy_WhenGivenZeroDays_ShouldThrowException() {
-        SimulationDay simulationDay = SimulationDay.zero();
+        SimulationDay simulationDay = SimulationDay.dayZero();
 
         assertThatThrownBy(() -> simulationDay.advanceBy(0))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -58,7 +58,7 @@ class SimulationDayTest {
 
     @Test
     void advanceBy_WhenGivenNegativeDays_ShouldThrowException() {
-        SimulationDay simulationDay = SimulationDay.zero();
+        SimulationDay simulationDay = SimulationDay.dayZero();
 
         assertThatThrownBy(() -> simulationDay.advanceBy(-2))
                 .isInstanceOf(IllegalArgumentException.class)

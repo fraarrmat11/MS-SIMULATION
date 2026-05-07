@@ -11,7 +11,7 @@ public final class SimulationClock {
     }
 
     public static SimulationClock startingAtDayZero() {
-        return new SimulationClock(SimulationDay.zero());
+        return new SimulationClock(SimulationDay.dayZero());
     }
 
     public static SimulationClock fromCurrentDay(SimulationDay currentDay) {

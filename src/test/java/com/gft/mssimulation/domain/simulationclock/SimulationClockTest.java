@@ -16,7 +16,7 @@ class SimulationClockTest {
 
     @Test
     void fromCurrentDay_WhenGivenCurrentSimulationDay_ShouldCreateClock() {
-        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(8));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(8));
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(8);
     }
@@ -44,7 +44,7 @@ class SimulationClockTest {
 
     @Test
     void advanceDay_WhenGivenSeveralDays_ShouldUpdateCurrentDayAndReturnTimeAdvancedEvent() {
-        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(5));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(5));
 
         TimeAdvancedEvent event = simulationClock.advanceDay(3);
 
@@ -70,7 +70,7 @@ class SimulationClockTest {
 
     @Test
     void advanceDay_WhenGivenInvalidDays_ShouldThrowExceptionWithoutChangingCurrentDay() {
-        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.of(4));
+        SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(4));
 
         assertThatThrownBy(() -> simulationClock.advanceDay(0))
                 .isInstanceOf(IllegalArgumentException.class)
