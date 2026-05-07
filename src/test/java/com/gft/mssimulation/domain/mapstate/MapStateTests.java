@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 public class MapStateTests {
 
@@ -18,6 +19,16 @@ public class MapStateTests {
                 .hasSize(initialSize + 1)
                 .extracting("truckId")
                 .contains(truckId);
+    }
+
+    @Test
+    void registerTruck_WhenGivenExistingTruck_ShouldWork(){
+        UUID truckId = UUID.randomUUID();
+        int initialSize = mapState.getTrucks().size();
+        mapState.registerTruck(truckId,new Location(1,1));
+        assertThatThrownBy(() -> mapState.registerTruck(truckId,new Location(2,2))).isInstanceOf(IllegalArgumentException.class);
+        assertThat(mapState.getTrucks())
+                .hasSize(initialSize+1);
     }
 
     @Test
