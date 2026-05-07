@@ -22,7 +22,7 @@ public class MapStateTests {
     }
 
     @Test
-    void registerTruck_WhenGivenExistingTruck_ShouldWork(){
+    void registerTruck_WhenGivenExistingTruck_ShouldThrow(){
         UUID truckId = UUID.randomUUID();
         int initialSize = mapState.getTrucks().size();
         mapState.registerTruck(truckId,new Location(1,1));
