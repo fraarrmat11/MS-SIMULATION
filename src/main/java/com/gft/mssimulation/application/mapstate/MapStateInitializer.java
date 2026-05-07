@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
+@Profile("!test")
 public class MapStateInitializer {
     private final LoadMapStateUseCase loadMapStateUseCase;
     private final MapStateHolder holder;
