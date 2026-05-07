@@ -18,6 +18,13 @@ public class RegisterTruckUseCase {
     private final TruckPositionJpaAdapter repository;
 
     public void execute(UUID truckId, Location location){
+        boolean alreadyRegistered = holder.get().getTrucks().stream()
+                .anyMatch(truckPosition -> truckPosition.getTruckId().equals(truckId));
+
+        if (alreadyRegistered) {
+            return;
+        }
+
         holder.get().registerTruck(truckId, location);
         repository.save(new TruckPosition(truckId,location));
     }

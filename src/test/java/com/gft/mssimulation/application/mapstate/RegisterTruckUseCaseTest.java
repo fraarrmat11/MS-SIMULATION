@@ -56,4 +56,30 @@ public class RegisterTruckUseCaseTest {
 
         verify(repository, never()).save(any());
     }
+
+    @Test
+    void shouldIgnoreAlreadyRegisteredTruck(){
+        //GIVEN
+        MapState mapState = new MapState();
+        UUID truckId = UUID.randomUUID();
+        mapState.registerTruck(truckId, new Location(1,1));
+
+        MapStateHolder holder = new MapStateHolder();
+        holder.set(mapState);
+
+        TruckPositionJpaAdapter repository = mock(TruckPositionJpaAdapter.class);
+
+        RegisterTruckUseCase useCase = new RegisterTruckUseCase(holder, repository);
+
+        //WHEN
+        useCase.execute(truckId, new Location(1,1));
+
+        //THEN
+        assertThat(holder.get().getTrucks())
+                .hasSize(1)
+                .extracting("truckId")
+                .containsExactly(truckId);
+
+        verify(repository, never()).save(any());
+    }
 }
