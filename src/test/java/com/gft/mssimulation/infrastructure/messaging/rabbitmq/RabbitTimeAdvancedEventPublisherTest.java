@@ -47,7 +47,7 @@ class RabbitTimeAdvancedEventPublisherTest {
 
     @Test
     void publish_WhenGivenTimeAdvancedEvent_ShouldPublishJsonUsingTimeAdvancedRoutingKey() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.occurred(2, 5, 3);
+        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
 
         publisher.publish(event);
 
@@ -76,7 +76,7 @@ class RabbitTimeAdvancedEventPublisherTest {
     @Test
     void publish_WhenMessageCannotBeSerialized_ShouldThrowExceptionAndNotPublish() throws JsonProcessingException {
         ObjectMapper failingObjectMapper = mock(ObjectMapper.class);
-        TimeAdvancedEvent event = TimeAdvancedEvent.occurred(2, 5, 3);
+        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
         RabbitTimeAdvancedEventPublisher failingPublisher = new RabbitTimeAdvancedEventPublisher(
                 rabbitTemplate,
                 failingObjectMapper

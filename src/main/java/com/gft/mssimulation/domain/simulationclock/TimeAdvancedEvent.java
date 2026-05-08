@@ -39,7 +39,7 @@ public final class TimeAdvancedEvent {
         this.occurredAt = Objects.requireNonNull(occurredAt, "occurredAt cannot be null");
     }
 
-    public static TimeAdvancedEvent occurred(int previousDayNumber, int currentDayNumber, int daysAdvanced) {
+    public static TimeAdvancedEvent timeAdvanced(int previousDayNumber, int currentDayNumber, int daysAdvanced) {
         return new TimeAdvancedEvent(
                 UUID.randomUUID(),
                 previousDayNumber,
