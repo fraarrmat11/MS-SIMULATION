@@ -10,7 +10,7 @@ class TimeAdvancedMessageTest {
 
     @Test
     void from_WhenGivenTimeAdvancedEvent_ShouldMapAllFields() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.occurred(0, 1, 1);
+        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
 
         TimeAdvancedMessage message = TimeAdvancedMessage.from(event);
 
@@ -30,7 +30,7 @@ class TimeAdvancedMessageTest {
 
     @Test
     void records_WhenGivenSameValues_ShouldBeEqual() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.occurred(0, 1, 1);
+        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
 
         TimeAdvancedMessage firstMessage = TimeAdvancedMessage.from(event);
         TimeAdvancedMessage secondMessage = TimeAdvancedMessage.from(event);

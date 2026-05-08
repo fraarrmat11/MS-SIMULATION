@@ -9,7 +9,7 @@ class TimeAdvancedResultTest {
 
     @Test
     void from_WhenGivenTimeAdvancedEvent_ShouldMapAllFields() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.occurred(2, 5, 3);
+        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
 
         TimeAdvancedResult result = TimeAdvancedResult.from(event);
 
@@ -22,7 +22,7 @@ class TimeAdvancedResultTest {
 
     @Test
     void records_WhenGivenSameValues_ShouldBeEqual() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.occurred(0, 1, 1);
+        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
 
         TimeAdvancedResult firstResult = TimeAdvancedResult.from(event);
         TimeAdvancedResult secondResult = TimeAdvancedResult.from(event);

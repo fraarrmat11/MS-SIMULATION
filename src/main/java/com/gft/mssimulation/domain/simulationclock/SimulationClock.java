@@ -24,7 +24,7 @@ public final class SimulationClock {
 
         currentDay = advancedDay;
 
-        return TimeAdvancedEvent.occurred(
+        return TimeAdvancedEvent.timeAdvanced(
                 previousDay.dayNumber(),
                 advancedDay.dayNumber(),
                 daysToAdvance
