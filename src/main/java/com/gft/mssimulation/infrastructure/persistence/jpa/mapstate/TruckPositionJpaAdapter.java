@@ -28,7 +28,11 @@ public class TruckPositionJpaAdapter implements TruckPositionPort {
 
     @Override
     public void save(TruckPosition truckPosition) {
-        TruckPositionEntity entity = new TruckPositionEntity();
+        TruckPositionEntity entity = new TruckPositionEntity(
+                truckPosition.getTruckId(),
+                truckPosition.getLocation().getX(),
+                truckPosition.getLocation().getY()
+        );
         repository.save(entity);
     }
 }
