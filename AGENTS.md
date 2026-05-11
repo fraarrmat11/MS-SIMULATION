@@ -25,8 +25,8 @@ This microservice has two main responsibilities:
 
 The codebase is organized by layers and by functional area:
 
-- `simulationclock`: simulation day, time advancement and `time.advanced.v1`.
-- `mapstate`: map read model built from external events.
+- `simulationclock`: simulation day, time advancement and `time.advanced.v1`. You can find him in the module ms-time
+- `mapstate`: map read model built from external events. You can find him in the module ms-map
 
 The two modules must remain conceptually separated. Do not mix simulation clock logic with map state logic.
 
