@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
+@RequestMapping("tick")
 @RestController
 public class SimulationClockController {
 
@@ -30,14 +31,14 @@ public class SimulationClockController {
         );
     }
 
-    @GetMapping("/tick/current-day")
+    @GetMapping("current")
     public ResponseEntity<CurrentSimulationDayResponse> getCurrentSimulationDay() {
         int currentDay = getCurrentSimulationDayUseCase.getCurrentSimulationDay();
 
         return ResponseEntity.ok(new CurrentSimulationDayResponse(currentDay));
     }
 
-    @PostMapping("/tick/{days}")
+    @PostMapping("{days}")
     public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @PathVariable int days) {
         if(days < 1){
             return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
