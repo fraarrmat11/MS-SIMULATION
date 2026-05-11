@@ -1,6 +1,6 @@
 ---
 name: review-simulation-clock
-description: Review the simulation clock module, time advancement domain logic, persistence flow, time.advanced.v1 publication and related tests. Do not check or require GET /tick/current-day.
+description: Review the simulation clock module, time advancement domain logic, persistence flow, time.advanced.v1 publication and related tests. Do not require current-day endpoints beyond GET /tick/current.
 ---
 
 # Review Simulation Clock Skill
