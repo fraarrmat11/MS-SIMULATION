@@ -13,7 +13,7 @@ Review only the simulation time responsibility:
 
 - Simulation day model
 - Time advancement use case
-- `POST /tick`
+- `POST/tick/{days}`
 - Persistence of current simulation day
 - `time.advanced.v1` domain event
 - RabbitMQ publication of `time.advanced.v1`
