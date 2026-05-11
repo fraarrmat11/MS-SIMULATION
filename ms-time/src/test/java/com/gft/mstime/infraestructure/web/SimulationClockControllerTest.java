@@ -3,7 +3,6 @@ package com.gft.mstime.infraestructure.web;
 import com.gft.mstime.application.usecase.AdvanceTimeUseCase;
 import com.gft.mstime.application.command.AdvanceTimeCommand;
 import com.gft.mstime.application.result.TimeAdvancedResult;
-import com.gft.mstime.infraestructure.web.request.AdvanceTimeRequest;
 import com.gft.mstime.infraestructure.web.response.TimeAdvancedResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -32,7 +31,7 @@ class SimulationClockControllerTest {
         TimeAdvancedResult result = new TimeAdvancedResult(eventId, 2, 5, 3, occurredAt);
         when(advanceTimeUseCase.advanceTime(any(AdvanceTimeCommand.class))).thenReturn(result);
 
-        ResponseEntity<TimeAdvancedResponse> response = controller.advanceTime(new AdvanceTimeRequest(3));
+        ResponseEntity<TimeAdvancedResponse> response = controller.advanceTime(3);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -45,6 +44,18 @@ class SimulationClockControllerTest {
         ArgumentCaptor<AdvanceTimeCommand> commandCaptor = ArgumentCaptor.forClass(AdvanceTimeCommand.class);
         verify(advanceTimeUseCase).advanceTime(commandCaptor.capture());
         assertThat(commandCaptor.getValue().days()).isEqualTo(3);
+        verifyNoMoreInteractions(advanceTimeUseCase);
+    }
+
+    @Test
+    void advanceTime_WhenDaysIsLessThanOne_ShouldReturnRequestedRangeNotSatisfiable() {
+        AdvanceTimeUseCase advanceTimeUseCase = mock(AdvanceTimeUseCase.class);
+        SimulationClockController controller = new SimulationClockController(advanceTimeUseCase);
+
+        ResponseEntity<TimeAdvancedResponse> response = controller.advanceTime(0);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+        assertThat(response.getBody()).isNull();
         verifyNoMoreInteractions(advanceTimeUseCase);
     }
 
