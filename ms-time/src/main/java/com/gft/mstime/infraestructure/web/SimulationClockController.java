@@ -3,12 +3,9 @@ package com.gft.mstime.infraestructure.web;
 import com.gft.mstime.application.usecase.AdvanceTimeUseCase;
 import com.gft.mstime.application.command.AdvanceTimeCommand;
 import com.gft.mstime.application.result.TimeAdvancedResult;
-import com.gft.mstime.domain.SimulationDay;
 import com.gft.mstime.infraestructure.web.response.TimeAdvancedResponse;
 import jakarta.validation.Valid;
-import lombok.NonNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
