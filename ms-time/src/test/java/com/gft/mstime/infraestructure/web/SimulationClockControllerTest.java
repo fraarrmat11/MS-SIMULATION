@@ -3,6 +3,8 @@ package com.gft.mstime.infraestructure.web;
 import com.gft.mstime.application.usecase.AdvanceTimeUseCase;
 import com.gft.mstime.application.command.AdvanceTimeCommand;
 import com.gft.mstime.application.result.TimeAdvancedResult;
+import com.gft.mstime.application.usecase.GetCurrentSimulationDayUseCase;
+import com.gft.mstime.infraestructure.web.response.CurrentSimulationDayResponse;
 import com.gft.mstime.infraestructure.web.response.TimeAdvancedResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -25,7 +27,11 @@ class SimulationClockControllerTest {
     @Test
     void advanceTime_WhenRequestIsValid_ShouldAdvanceTimeAndReturnTimeAdvancedResponse() {
         AdvanceTimeUseCase advanceTimeUseCase = mock(AdvanceTimeUseCase.class);
-        SimulationClockController controller = new SimulationClockController(advanceTimeUseCase);
+        GetCurrentSimulationDayUseCase getCurrentSimulationDayUseCase = mock(GetCurrentSimulationDayUseCase.class);
+        SimulationClockController controller = new SimulationClockController(
+                advanceTimeUseCase,
+                getCurrentSimulationDayUseCase
+        );
         UUID eventId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         Instant occurredAt = Instant.parse("2026-05-04T11:30:00Z");
         TimeAdvancedResult result = new TimeAdvancedResult(eventId, 2, 5, 3, occurredAt);
@@ -45,24 +51,59 @@ class SimulationClockControllerTest {
         verify(advanceTimeUseCase).advanceTime(commandCaptor.capture());
         assertThat(commandCaptor.getValue().days()).isEqualTo(3);
         verifyNoMoreInteractions(advanceTimeUseCase);
+        verifyNoMoreInteractions(getCurrentSimulationDayUseCase);
     }
 
     @Test
     void advanceTime_WhenDaysIsLessThanOne_ShouldReturnRequestedRangeNotSatisfiable() {
         AdvanceTimeUseCase advanceTimeUseCase = mock(AdvanceTimeUseCase.class);
-        SimulationClockController controller = new SimulationClockController(advanceTimeUseCase);
+        GetCurrentSimulationDayUseCase getCurrentSimulationDayUseCase = mock(GetCurrentSimulationDayUseCase.class);
+        SimulationClockController controller = new SimulationClockController(
+                advanceTimeUseCase,
+                getCurrentSimulationDayUseCase
+        );
 
         ResponseEntity<TimeAdvancedResponse> response = controller.advanceTime(0);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
         assertThat(response.getBody()).isNull();
-        verifyNoMoreInteractions(advanceTimeUseCase);
+        verifyNoMoreInteractions(advanceTimeUseCase, getCurrentSimulationDayUseCase);
     }
 
     @Test
-    void constructor_WhenUseCaseIsNull_ShouldThrowException() {
-        assertThatThrownBy(() -> new SimulationClockController(null))
+    void getCurrentSimulationDay_WhenRequested_ShouldReturnCurrentDayResponse() {
+        AdvanceTimeUseCase advanceTimeUseCase = mock(AdvanceTimeUseCase.class);
+        GetCurrentSimulationDayUseCase getCurrentSimulationDayUseCase = mock(GetCurrentSimulationDayUseCase.class);
+        SimulationClockController controller = new SimulationClockController(
+                advanceTimeUseCase,
+                getCurrentSimulationDayUseCase
+        );
+        when(getCurrentSimulationDayUseCase.getCurrentSimulationDay()).thenReturn(6);
+
+        ResponseEntity<CurrentSimulationDayResponse> response = controller.getCurrentSimulationDay();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().currentDay()).isEqualTo(6);
+        verify(getCurrentSimulationDayUseCase).getCurrentSimulationDay();
+        verifyNoMoreInteractions(advanceTimeUseCase, getCurrentSimulationDayUseCase);
+    }
+
+    @Test
+    void constructor_WhenAdvanceTimeUseCaseIsNull_ShouldThrowException() {
+        GetCurrentSimulationDayUseCase getCurrentSimulationDayUseCase = mock(GetCurrentSimulationDayUseCase.class);
+
+        assertThatThrownBy(() -> new SimulationClockController(null, getCurrentSimulationDayUseCase))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("advanceTimeUseCase cannot be null");
+    }
+
+    @Test
+    void constructor_WhenGetCurrentSimulationDayUseCaseIsNull_ShouldThrowException() {
+        AdvanceTimeUseCase advanceTimeUseCase = mock(AdvanceTimeUseCase.class);
+
+        assertThatThrownBy(() -> new SimulationClockController(advanceTimeUseCase, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("getCurrentSimulationDayUseCase cannot be null");
     }
 }

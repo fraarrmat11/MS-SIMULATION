@@ -31,3 +31,35 @@ build/
 
 ### VS Code ###
 .vscode/
+/readme's/AdvanceTimeCommand.md
+/src/test/java/com/gft/mssimulation/application/simulationclock/command/AdvanceTimeCommandTest.md
+/readme's/AdvanceTimeRequest.md
+/src/test/java/com/gft/mssimulation/infrastructure/web/request/AdvanceTimeRequestTest.md
+/readme's/AdvanceTimeService.md
+/src/test/java/com/gft/mssimulation/application/simulationclock/AdvanceTimeServiceTest.md
+/readme's/AdvanceTimeUseCase.md
+/readme's/MsSimulationApplication.md
+/src/test/java/com/gft/mssimulation/MsSimulationApplicationTests.md
+/readme's/RabbitTimeAdvancedEventPublisher.md
+/src/test/java/com/gft/mssimulation/infrastructure/messaging/rabbitmq/RabbitTimeAdvancedEventPublisherTest.md
+/readme's/SimulationClock.md
+/readme's/SimulationClockController.md
+/src/test/java/com/gft/mssimulation/infrastructure/web/SimulationClockControllerTest.md
+/readme's/SimulationClockEntity.md
+/src/test/java/com/gft/mssimulation/infrastructure/persistence/jpa/simulationclock/SimulationClockEntityTest.md
+/readme's/SimulationClockJpaAdapter.md
+/src/test/java/com/gft/mssimulation/infrastructure/persistence/jpa/simulationclock/SimulationClockJpaAdapterTest.md
+/readme's/SimulationClockRepository.md
+/src/test/java/com/gft/mssimulation/domain/simulationclock/SimulationClockTest.md
+/readme's/SimulationDay.md
+/src/test/java/com/gft/mssimulation/domain/simulationclock/SimulationDayTest.md
+/readme's/SpringDataSimulationClockRepository.md
+/readme's/TimeAdvancedEvent.md
+/readme's/TimeAdvancedEventPublisher.md
+/src/test/java/com/gft/mssimulation/domain/simulationclock/TimeAdvancedEventTest.md
+/readme's/TimeAdvancedMessage.md
+/src/test/java/com/gft/mssimulation/infrastructure/messaging/rabbitmq/message/TimeAdvancedMessageTest.md
+/readme's/TimeAdvancedResponse.md
+/src/test/java/com/gft/mssimulation/infrastructure/web/response/TimeAdvancedResponseTest.md
+/readme's/TimeAdvancedResult.md
+/src/test/java/com/gft/mssimulation/application/simulationclock/result/TimeAdvancedResultTest.md
