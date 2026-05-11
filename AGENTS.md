@@ -10,7 +10,7 @@ This microservice has two main responsibilities:
 
 1. Simulation clock:
     - Controls the current simulation day.
-    - Exposes `POST /tick` to advance simulation time.
+    - Exposes `POST /tick/{days}` to advance simulation time.
     - Publishes the `time.advanced.v1` event through RabbitMQ when time advances.
     - Represents simulation day as an `int`, never as `Date`, `LocalDate` or calendar time.
     - Does not move trucks, manufacture products, modify stock or generate reports.
