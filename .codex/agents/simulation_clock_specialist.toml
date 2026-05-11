@@ -22,8 +22,8 @@ Important:
 - Do not modify stock.
 - Do not generate reports.
 
-GET /tick/current-day is not implemented yet.
-Do not implement it unless the user explicitly asks for that specific feature.
+GET /tick/current returns the current simulation day.
+Do not add alternative current-day endpoints unless the user explicitly asks for that specific feature.
 If the user asks about it, first propose a plan before editing.
 
 Before editing:
