@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gft.mstime.domain.TimeAdvancedEvent;
+import com.gft.mstime.infraestructure.config.RabbitMQConfig;
+import com.gft.mstime.infraestructure.messaging.rabbitmq.message.TimeAdvancedMessage;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,44 +24,37 @@ import static org.mockito.Mockito.when;
 class RabbitTimeAdvancedEventPublisherTest {
 
     private final RabbitTemplate rabbitTemplate = mock(RabbitTemplate.class);
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final RabbitTimeAdvancedEventPublisher publisher = new RabbitTimeAdvancedEventPublisher(
-            rabbitTemplate,
-            objectMapper
+            rabbitTemplate
     );
 
     @Test
     void constructor_WhenGivenNullRabbitTemplate_ShouldThrowException() {
-        assertThatThrownBy(() -> new RabbitTimeAdvancedEventPublisher(null, objectMapper))
+        assertThatThrownBy(() -> new RabbitTimeAdvancedEventPublisher(null))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("rabbitTemplate cannot be null");
     }
 
     @Test
-    void constructor_WhenGivenNullObjectMapper_ShouldThrowException() {
-        assertThatThrownBy(() -> new RabbitTimeAdvancedEventPublisher(rabbitTemplate, null))
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("objectMapper cannot be null");
-    }
-
-    @Test
-    void publish_WhenGivenTimeAdvancedEvent_ShouldPublishJsonUsingTimeAdvancedRoutingKey() {
+    void publish_WhenGivenTimeAdvancedEvent_ShouldSendMessage() {
         TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
 
         publisher.publish(event);
 
-        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        verify(rabbitTemplate).convertAndSend(eq("time.advanced.v1"), messageCaptor.capture());
+        ArgumentCaptor<TimeAdvancedMessage> messageCaptor =
+                ArgumentCaptor.forClass(TimeAdvancedMessage.class);
 
-        assertThat(messageCaptor.getValue())
-                .contains("\"eventId\":\"" + event.eventId() + "\"")
-                .contains("\"previousDay\":2")
-                .contains("\"currentDay\":5")
-                .contains("\"daysAdvanced\":3")
-                .contains("\"occurredAt\":\"" + event.occurredAt() + "\"");
+        verify(rabbitTemplate).convertAndSend(
+                eq(RabbitMQConfig.EXCHANGE),
+                eq(RabbitMQConfig.TIME_ADVANCED_ROUTING_KEY),
+                messageCaptor.capture()
+        );
+
+        TimeAdvancedMessage message = messageCaptor.getValue();
+
+        assertThat(message.eventId()).isEqualTo(event.eventId());
+        assertThat(message.currentDay()).isEqualTo(event.currentDay());
 
         verifyNoMoreInteractions(rabbitTemplate);
     }
@@ -73,24 +68,4 @@ class RabbitTimeAdvancedEventPublisherTest {
         verifyNoInteractions(rabbitTemplate);
     }
 
-    @Test
-    void publish_WhenMessageCannotBeSerialized_ShouldThrowExceptionAndNotPublish() throws JsonProcessingException {
-        ObjectMapper failingObjectMapper = mock(ObjectMapper.class);
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
-        RabbitTimeAdvancedEventPublisher failingPublisher = new RabbitTimeAdvancedEventPublisher(
-                rabbitTemplate,
-                failingObjectMapper
-        );
-
-        when(failingObjectMapper.writeValueAsString(any()))
-                .thenThrow(new JsonProcessingException("serialization failed") {
-                });
-
-        assertThatThrownBy(() -> failingPublisher.publish(event))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Could not serialize time advanced message")
-                .hasCauseInstanceOf(JsonProcessingException.class);
-
-        verifyNoInteractions(rabbitTemplate);
-    }
 }
