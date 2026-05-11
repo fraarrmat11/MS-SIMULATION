@@ -3,13 +3,11 @@ package com.gft.mstime.infraestructure.web;
 import com.gft.mstime.application.usecase.AdvanceTimeUseCase;
 import com.gft.mstime.application.command.AdvanceTimeCommand;
 import com.gft.mstime.application.result.TimeAdvancedResult;
-import com.gft.mstime.infraestructure.web.request.AdvanceTimeRequest;
 import com.gft.mstime.infraestructure.web.response.TimeAdvancedResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
@@ -22,10 +20,12 @@ public class SimulationClockController {
         this.advanceTimeUseCase = Objects.requireNonNull(advanceTimeUseCase, "advanceTimeUseCase cannot be null");
     }
 
-    @PostMapping("/tick")
-    public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @RequestBody AdvanceTimeRequest request) {
-        TimeAdvancedResult result = advanceTimeUseCase.advanceTime(new AdvanceTimeCommand(request.days()));
-
+    @PostMapping("/tick/{days}")
+    public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @PathVariable int days) {
+        if(days < 1){
+            return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
+        }
+        TimeAdvancedResult result = advanceTimeUseCase.advanceTime(new AdvanceTimeCommand(days));
         return ResponseEntity.ok(TimeAdvancedResponse.from(result));
     }
 }
