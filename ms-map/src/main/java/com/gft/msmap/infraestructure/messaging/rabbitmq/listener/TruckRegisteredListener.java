@@ -15,13 +15,9 @@ public class TruckRegisteredListener {
 
     @RabbitListener(queues = RabbitMQConfig.TRUCK_REGISTERED_QUEUE)
     public void onEvent(TruckRegisteredEvent event) {
-        try {
-            useCase.execute(
-                    event.getTruckId(),
-                    event.getLocation()
-            );
-        } catch (Exception e) {
-            throw e;
-        }
+        useCase.execute(
+                event.getTruckId(),
+                event.getLocation()
+        );
     }
 }
