@@ -1,0 +1,17 @@
+[Unit]
+Description=MS-SIMULATION ms-map service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/opt/ms-simulation/ms-map
+EnvironmentFile=/etc/ms-simulation/ms-map.env
+ExecStart=/usr/bin/java -jar /opt/ms-simulation/ms-map/ms-map.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
