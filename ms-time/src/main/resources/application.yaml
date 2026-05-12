@@ -2,7 +2,8 @@ spring:
   application:
     name: ms-time
   liquibase:
-    enabled: false
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5433/ms-simulation-db
@@ -11,7 +12,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
