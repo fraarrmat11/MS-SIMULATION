@@ -64,3 +64,67 @@ Expected published event:
   "daysAdvanced": 1,
   "occurredAt": "2026-04-29T10:00:00Z"
 }
+````
+
+## AWS deployment rules
+
+The initial deployment target is basic:
+
+- Amazon EC2 runs the Spring Boot application.
+- Amazon RDS PostgreSQL provides the database.
+- CloudAMQP provides RabbitMQ.
+- GitHub Actions may be used for CI/CD.
+
+Deployment work must not change business behavior.
+
+Do not modify:
+
+- simulation clock domain rules
+- map state domain rules
+- REST contracts
+- RabbitMQ event contracts
+- payload field names
+
+unless the user explicitly asks.
+
+Production configuration must use environment variables.
+
+Never commit:
+
+- AWS credentials
+- database credentials
+- CloudAMQP credentials
+- SSH private keys
+- tokens
+- real production URLs containing credentials
+
+Prefer these environment variables for production:
+
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `RABBITMQ_HOST`
+- `RABBITMQ_PORT`
+- `RABBITMQ_USERNAME`
+- `RABBITMQ_PASSWORD`
+- `RABBITMQ_VHOST`
+- `RABBITMQ_SSL_ENABLED`
+
+A basic GitHub Actions deployment should:
+
+1. Set up Java 21.
+2. Run tests.
+3. Build the Spring Boot JAR.
+4. Copy the artifact to EC2.
+5. Restart the application service on EC2.
+6. Keep all credentials in GitHub Secrets.
+
+Deployment documentation should clearly list:
+
+- required AWS resources
+- required GitHub secrets
+- required environment variables
+- EC2 setup steps
+- RDS setup steps
+- CloudAMQP setup steps
+- validation commands
