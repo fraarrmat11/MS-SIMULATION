@@ -1,6 +1,6 @@
 ---
 name: basic-aws-deployment
-description: Prepare, review or implement a basic AWS deployment for MS-SIMULATION using EC2, Amazon RDS PostgreSQL, CloudAMQP RabbitMQ and GitHub Actions.
+description: Prepare, review or implement a basic AWS deployment for MS-SIMULATION using EC2, separate Spring Boot JARs for ms-time and ms-map, Amazon RDS PostgreSQL, CloudAMQP RabbitMQ and GitHub Actions.
 ---
 
 # Basic AWS Deployment Skill
@@ -12,13 +12,17 @@ Use this skill when preparing, reviewing or implementing a basic AWS deployment 
 The initial deployment target is intentionally simple:
 
 - Application runs on Amazon EC2.
+- `ms-time` and `ms-map` are deployed as separate executable Spring Boot JARs.
+- The basic deployment may run both modules on the same EC2 instance.
+- Each module should have its own systemd service, typically `ms-time.service` and `ms-map.service`.
 - PostgreSQL runs on Amazon RDS.
 - RabbitMQ runs on CloudAMQP.
 - CI/CD is handled with GitHub Actions.
-- Deployment may use an executable Spring Boot JAR and a systemd service on EC2.
+- Deployment may use executable Spring Boot JARs and systemd services on EC2.
 - Docker may be proposed only if it clearly simplifies the deployment or the user asks for it.
 
 Do not design a complex cloud architecture unless the user explicitly asks for it.
+Do not merge `ms-time` and `ms-map` into a single JAR unless the user explicitly asks for that deployment model.
 
 ## Main goals
 
@@ -26,19 +30,21 @@ The deployment must:
 
 - Build the Java/Spring Boot application.
 - Run tests before deployment.
-- Package the application with Maven.
-- Deploy the generated artifact to EC2.
-- Restart the application safely on EC2.
+- Package both `ms-time` and `ms-map` with Maven when deploying the full basic stack.
+- Deploy the generated artifacts to EC2.
+- Restart each application safely on EC2.
 - Configure PostgreSQL through environment variables.
 - Configure CloudAMQP through environment variables.
 - Avoid hardcoded credentials.
 - Keep production configuration separate from local configuration.
+- Keep `ms-time` and `ms-map` runtime concerns separate: service names, ports, working directories, environment files and logs.
 
 ## AWS components
 
 Expected basic components:
 
 - EC2 instance for running the Spring Boot service.
+- The EC2 instance can run both `ms-time` and `ms-map` for the basic deployment.
 - RDS PostgreSQL instance for persistence.
 - Security Group for EC2.
 - Security Group for RDS.
@@ -99,9 +105,9 @@ A basic deployment workflow should:
 2. Set up Java 21.
 3. Cache Maven dependencies if useful.
 4. Run `./mvnw test` or `mvnw.cmd test` depending on runner.
-5. Package the application with Maven.
-6. Copy the built JAR to EC2.
-7. Restart the systemd service on EC2.
+5. Package `ms-time` and `ms-map` with Maven.
+6. Copy both built JARs to EC2.
+7. Restart `ms-time.service` and `ms-map.service` on EC2.
 8. Avoid printing secrets in logs.
 
 GitHub secrets may include:
@@ -126,14 +132,16 @@ Use repository or environment secrets. Do not commit secret values.
 
 If using systemd, provide or review:
 
-- service name
-- working directory
-- JAR path
-- environment file path
+- separate service names for `ms-time` and `ms-map`
+- separate working directories
+- separate JAR paths
+- environment file paths
 - restart policy
 - logs through `journalctl`
 
-The application should be restartable with a command similar to:
+The applications should be restartable with commands similar to:
 
 ```bash
-sudo systemctl restart ms-simulation
+sudo systemctl restart ms-time
+sudo systemctl restart ms-map
+```
