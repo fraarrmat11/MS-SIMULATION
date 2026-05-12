@@ -1,9 +1,8 @@
 package com.gft.msmap.infraestructure.config;
 
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
-import org.springframework.amqp.support.converter.Jackson2JavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -13,32 +12,67 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class RabbitMQConfig {
 
-    public static final String TRUCK_REGISTERED_QUEUE = "truck.registered.v1";
-    public static final String TRUCK_POSITION_UPDATED_QUEUE = "truck.position.updated.v1";
-    public static final String WAREHOUSE_REGISTERED_QUEUE = "warehouse.registered.v1";
+    public static final String TRUCK_REGISTERED_ROUTING_KEY = "truck.registered.v1";
+    public static final String TRUCK_POSITION_UPDATED_ROUTING_KEY = "truck.position.updated.v1";
+    public static final String WAREHOUSE_REGISTERED_ROUTING_KEY = "warehouse.registered.v1";
+
+    public static final String TRUCK_REGISTERED_QUEUE = "ms-map.truck-registered.q";
+    public static final String TRUCK_POSITION_UPDATED_QUEUE = "ms-map.truck-position-updated.q";
+    public static final String WAREHOUSE_REGISTERED_QUEUE = "ms-map.warehouse-registered.q";
+
 
     @Bean
-    Queue truckRegisteredQueue() {
-        return new Queue(TRUCK_REGISTERED_QUEUE, true);
+    public TopicExchange trucksExchange() {
+        TopicExchange exchange = new TopicExchange("trucks.exchange");
+        exchange.setShouldDeclare(false);
+        return exchange;
     }
 
     @Bean
-    Queue truckPositionUpdatedQueue() {
-        return new Queue(TRUCK_POSITION_UPDATED_QUEUE, true);
+    public Queue truckRegisteredQueue() {
+        return QueueBuilder.durable(TRUCK_REGISTERED_QUEUE).build();
     }
 
     @Bean
-    Queue warehouseRegisteredQueue() {
-        return new Queue(WAREHOUSE_REGISTERED_QUEUE, true);
+    public Queue truckPositionUpdatedQueue() {
+        return QueueBuilder.durable(TRUCK_POSITION_UPDATED_QUEUE).build();
     }
 
     @Bean
-    MessageConverter jsonMessageConverter() {
+    public Queue warehouseRegisteredQueue() {
+        return QueueBuilder.durable(WAREHOUSE_REGISTERED_QUEUE).build();
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+
         DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
-        typeMapper.setTypePrecedence(Jackson2JavaTypeMapper.TypePrecedence.INFERRED);
-        typeMapper.addTrustedPackages("com.gft.msmap");
+        typeMapper.setTrustedPackages("com.gft.msmap");
+
         converter.setJavaTypeMapper(typeMapper);
         return converter;
     }
+
+    @Bean
+    public Binding truckRegisteredBinding() {
+        return BindingBuilder.bind(truckRegisteredQueue())
+                .to(trucksExchange())
+                .with(TRUCK_REGISTERED_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding truckPositionUpdatedBinding() {
+        return BindingBuilder.bind(truckPositionUpdatedQueue())
+                .to(trucksExchange())
+                .with(TRUCK_POSITION_UPDATED_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding warehouseRegisteredBinding() {
+        return BindingBuilder.bind(warehouseRegisteredQueue())
+                .to(trucksExchange())
+                .with(WAREHOUSE_REGISTERED_ROUTING_KEY);
+    }
+
 }
