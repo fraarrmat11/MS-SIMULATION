@@ -15,15 +15,11 @@ public class WarehouseRegisteredListener {
 
     @RabbitListener(queues = RabbitMQConfig.WAREHOUSE_REGISTERED_QUEUE)
     public void onEvent(WarehouseRegisteredEvent event) {
-        try {
-            useCase.execute(
-                    event.getWarehouseId(),
-                    event.getName(),
-                    event.getLocation(),
-                    event.getWarehouseType()
-            );
-        } catch (Exception e) {
-            throw e;
-        }
+        useCase.execute(
+                event.getWarehouseId(),
+                event.getName(),
+                event.getLocation(),
+                event.getWarehouseType()
+        );
     }
 }

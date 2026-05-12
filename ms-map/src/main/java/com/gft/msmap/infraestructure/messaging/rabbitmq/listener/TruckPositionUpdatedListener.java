@@ -15,13 +15,9 @@ public class TruckPositionUpdatedListener {
 
     @RabbitListener(queues = RabbitMQConfig.TRUCK_POSITION_UPDATED_QUEUE)
     public void onEvent(TruckPositionUpdatedEvent event) {
-        try {
-            useCase.execute(
-                    event.getTruckId(),
-                    event.getLocation()
-            );
-        } catch (Exception e) {
-            throw e;
-        }
+        useCase.execute(
+                event.getTruckId(),
+                event.getLocation()
+        );
     }
 }
