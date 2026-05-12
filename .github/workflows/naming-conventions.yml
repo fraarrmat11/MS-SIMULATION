@@ -2,11 +2,9 @@ name: naming conventions
 
 on:
   push:
-    branches-ignore:
-      - master
+    branches: [ "master","main" ]
   pull_request:
-    branches:
-      - master
+    branches: [ "master","main" ]
 
 jobs:
   check-branch-name:
