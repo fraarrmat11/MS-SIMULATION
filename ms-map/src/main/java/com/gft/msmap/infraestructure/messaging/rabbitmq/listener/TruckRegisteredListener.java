@@ -14,10 +14,14 @@ public class TruckRegisteredListener {
     private final RegisterTruckUseCase useCase;
 
     @RabbitListener(queues = RabbitMQConfig.TRUCK_REGISTERED_QUEUE)
-    public void onEvent(TruckRegisteredEvent event){
-        useCase.execute(
-                event.getTruckId(),
-                event.getLocation()
-        );
+    public void onEvent(TruckRegisteredEvent event) {
+        try {
+            useCase.execute(
+                    event.getTruckId(),
+                    event.getLocation()
+            );
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
