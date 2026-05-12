@@ -23,9 +23,8 @@ public class RabbitMQConfig {
 
     @Bean
     public TopicExchange trucksExchange() {
-        TopicExchange exchange = new TopicExchange("trucks.exchange");
-        exchange.setShouldDeclare(false);
-        return exchange;
+
+        return new TopicExchange("trucks.exchange");
     }
 
     @Bean
