@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class RabbitMQConfig {
 
-    public static final String EXCHANGE = "ms-map.events";
-
     public static final String TRUCK_REGISTERED_ROUTING_KEY = "truck.registered.v1";
     public static final String TRUCK_POSITION_UPDATED_ROUTING_KEY = "truck.position.updated.v1";
     public static final String WAREHOUSE_REGISTERED_ROUTING_KEY = "warehouse.registered.v1";
@@ -24,8 +22,10 @@ public class RabbitMQConfig {
 
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(EXCHANGE);
+    public TopicExchange trucksExchange() {
+        TopicExchange exchange = new TopicExchange("trucks.exchange");
+        exchange.setShouldDeclare(false);
+        return exchange;
     }
 
     @Bean
@@ -48,7 +48,7 @@ public class RabbitMQConfig {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
 
         DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
-        typeMapper.setTrustedPackages("com.gft.mstime");
+        typeMapper.setTrustedPackages("com.gft.msmap");
 
         converter.setJavaTypeMapper(typeMapper);
         return converter;
@@ -57,21 +57,21 @@ public class RabbitMQConfig {
     @Bean
     public Binding truckRegisteredBinding() {
         return BindingBuilder.bind(truckRegisteredQueue())
-                .to(exchange())
+                .to(trucksExchange())
                 .with(TRUCK_REGISTERED_ROUTING_KEY);
     }
 
     @Bean
     public Binding truckPositionUpdatedBinding() {
         return BindingBuilder.bind(truckPositionUpdatedQueue())
-                .to(exchange())
+                .to(trucksExchange())
                 .with(TRUCK_POSITION_UPDATED_ROUTING_KEY);
     }
 
     @Bean
     public Binding warehouseRegisteredBinding() {
         return BindingBuilder.bind(warehouseRegisteredQueue())
-                .to(exchange())
+                .to(trucksExchange())
                 .with(WAREHOUSE_REGISTERED_ROUTING_KEY);
     }
 
