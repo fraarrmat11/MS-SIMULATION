@@ -6,11 +6,9 @@
     <groupId>com.gft</groupId>
     <artifactId>transport-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
-    <!-- CLAVE: packaging pom, no jar -->
     <packaging>pom</packaging>
 
-    <name>transport-service</name>
+    <name>SIMULATION-SERVICE</name>
     <description>Parent aggregator</description>
 
     <modules>
@@ -21,6 +19,7 @@
     <properties>
         <java.version>21</java.version>
         <jacoco.version>0.8.13</jacoco.version>
+        <docker.host>npipe:////./pipe/docker_engine</docker.host>
     </properties>
 
     <build>
@@ -31,7 +30,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <systemPropertyVariables>
-                            <docker.host>npipe:////./pipe/rancher-desktop</docker.host>
+                            <docker.host>${docker.host}</docker.host>
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
