@@ -6,13 +6,12 @@ import com.gft.mstime.infraestructure.persistence.jpa.SpringDataSimulationClockR
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.amqp.rabbit.junit.RabbitAvailable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,8 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
-@RabbitAvailable
-class SimulationClockControllerIT {
+class SimulationClockControllerIT{
 
     @Autowired
     MockMvc mockMvc;
@@ -37,7 +35,7 @@ class SimulationClockControllerIT {
     @Autowired
     SpringDataSimulationClockRepository clockRepository;
 
-    @MockBean
+    @MockitoBean
     TimeAdvancedEventPublisher timeAdvancedEventPublisher;
 
     @BeforeEach
