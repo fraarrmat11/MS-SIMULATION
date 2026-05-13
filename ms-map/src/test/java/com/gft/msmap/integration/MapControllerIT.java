@@ -17,7 +17,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
 
@@ -25,18 +30,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Tests de integración para MapController.
- *
- * - BD: H2 en memoria (perfil "integration-test")
- * - RabbitMQ: broker embebido de spring-rabbit-test (@RabbitAvailable)
- *   Sin Docker, sin Testcontainers, sin conexión externa.
- */
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
-@RabbitAvailable
+@Testcontainers
 class MapControllerIT {
+
+    @Container
+    static RabbitMQContainer rabbit =
+            new RabbitMQContainer("rabbitmq:3.13-management-alpine");
+
+    @DynamicPropertySource
+    static void rabbitProps(DynamicPropertyRegistry registry) {
+        registry.add("spring.rabbitmq.host", rabbit::getHost);
+        registry.add("spring.rabbitmq.port", rabbit::getAmqpPort);
+        registry.add("spring.rabbitmq.username", rabbit::getAdminUsername);
+        registry.add("spring.rabbitmq.password", rabbit::getAdminPassword);
+    }
 
     @Autowired
     MockMvc mockMvc;

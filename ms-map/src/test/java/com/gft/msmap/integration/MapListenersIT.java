@@ -19,6 +19,11 @@ import org.springframework.amqp.rabbit.junit.RabbitAvailable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -26,27 +31,23 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-/**
- * Tests de integración para los listeners de ms-map.
- *
- * - BD: H2 en memoria (perfil "integration-test")
- * - RabbitMQ: broker embebido de spring-rabbit-test (@RabbitAvailable)
- *   Sin Docker, sin Testcontainers, sin conexión externa.
- *
- * La dependencia spring-rabbit-test ya está en ms-map/pom.xml (scope test).
- * Hay que añadir también la dependencia QPID broker embebido — ver pom comentario.
- */
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("integration-test")
-@RabbitAvailable(
-        queues = {
-                RabbitMQConfig.TRUCK_REGISTERED_QUEUE,
-                RabbitMQConfig.TRUCK_POSITION_UPDATED_QUEUE,
-                RabbitMQConfig.WAREHOUSE_REGISTERED_QUEUE
-        },
-        purgeAfterEach = false
-)
+@Testcontainers
 class MapListenersIT {
+
+    @Container
+    static RabbitMQContainer rabbit =
+            new RabbitMQContainer("rabbitmq:3.13-management-alpine");
+
+    @DynamicPropertySource
+    static void rabbitProps(DynamicPropertyRegistry registry) {
+        registry.add("spring.rabbitmq.host", rabbit::getHost);
+        registry.add("spring.rabbitmq.port", rabbit::getAmqpPort);
+        registry.add("spring.rabbitmq.username", rabbit::getAdminUsername);
+        registry.add("spring.rabbitmq.password", rabbit::getAdminPassword);
+    }
 
     @Autowired
     RabbitTemplate rabbitTemplate;
