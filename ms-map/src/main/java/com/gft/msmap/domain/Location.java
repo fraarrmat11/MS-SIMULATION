@@ -1,10 +1,10 @@
 package com.gft.msmap.domain;
 
 
+import com.gft.msmap.domain.exceptions.InvalidLocationException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Getter
 public class Location {
     private int x;
@@ -12,7 +12,7 @@ public class Location {
 
     public Location(int x, int y) {
         if(x < 0 || y < 0){
-            throw new IllegalArgumentException("Location edges can't be null");
+            throw new InvalidLocationException(x,y);
         }
         this.x = x;
         this.y = y;
