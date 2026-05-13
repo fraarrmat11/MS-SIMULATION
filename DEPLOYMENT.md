@@ -20,8 +20,8 @@ Both modules remain separate runtime units.
 
 | Module | ECR image | ECS service | Container port |
 | --- | --- | --- | --- |
-| `ms-time` | `<aws-account-id>.dkr.ecr.<region>.amazonaws.com/ms-time` | `ms-time-service` | `8081` |
-| `ms-map` | `<aws-account-id>.dkr.ecr.<region>.amazonaws.com/ms-map` | `ms-map-service` | `8080` |
+| `ms-time` | `<aws-account-id>.dkr.ecr.<region>.amazonaws.com/ms-time-2026-atmy` | `ms-time-service-2026-atmy` | `8081` |
+| `ms-map` | `<aws-account-id>.dkr.ecr.<region>.amazonaws.com/ms-map-2026-atmy` | `ms-map-service-2026-atmy` | `8080` |
 
 Each module should have its own:
 
@@ -87,9 +87,12 @@ Do not commit real database credentials, RabbitMQ credentials, AWS credentials, 
 
 ## GitHub Actions
 
-GitHub Actions should:
+GitHub Actions should initially run manually with `workflow_dispatch` while AWS is being prepared.
+After the AWS setup is complete, the workflow may be extended to trigger on push to `main`.
 
-1. Trigger on push to `main`.
+The deployment workflow should:
+
+1. Run manually during the first setup phase.
 2. Set up Java 21.
 3. Run the Maven test suite.
 4. Build Docker images for `ms-time` and `ms-map`.
@@ -105,11 +108,11 @@ Expected GitHub configuration:
 ```text
 AWS_REGION
 AWS_ROLE_TO_ASSUME
-ECR_REPOSITORY_MS_TIME
-ECR_REPOSITORY_MS_MAP
-ECS_CLUSTER
-ECS_SERVICE_MS_TIME
-ECS_SERVICE_MS_MAP
+ECR_REPOSITORY_MS_TIME=ms-time-2026-atmy
+ECR_REPOSITORY_MS_MAP=ms-map-2026-atmy
+ECS_CLUSTER=ms-simulation-cluster-2026-atmy
+ECS_SERVICE_MS_TIME=ms-time-service-2026-atmy
+ECS_SERVICE_MS_MAP=ms-map-service-2026-atmy
 ECS_TASK_DEFINITION_MS_TIME
 ECS_TASK_DEFINITION_MS_MAP
 ```
