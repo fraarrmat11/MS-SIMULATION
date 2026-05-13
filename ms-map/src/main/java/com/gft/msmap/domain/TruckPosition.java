@@ -11,4 +11,8 @@ import java.util.UUID;
 public class TruckPosition {
     private UUID truckId;
     private Location location;
+
+    public void updateLocation(Location newLocation) {
+        this.location = newLocation;
+    }
 }

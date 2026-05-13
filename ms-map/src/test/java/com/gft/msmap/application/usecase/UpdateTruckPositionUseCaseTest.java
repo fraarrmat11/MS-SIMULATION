@@ -6,6 +6,7 @@ import com.gft.msmap.application.service.impl.InMemoryMapStateHolder;
 import com.gft.msmap.domain.Location;
 import com.gft.msmap.domain.MapState;
 import com.gft.msmap.domain.TruckPosition;
+import com.gft.msmap.domain.exceptions.TruckNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -62,7 +63,7 @@ class UpdateTruckPositionUseCaseTest {
 
         assertThatThrownBy(() ->
                 useCase.execute(unknownTruckId, new Location(1, 1))
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(TruckNotFoundException.class);
 
         verify(repository,never()).save(any());
     }

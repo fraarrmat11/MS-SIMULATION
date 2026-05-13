@@ -1,5 +1,9 @@
 package com.gft.msmap.domain;
 
+import com.gft.msmap.domain.exceptions.InvalidLocationException;
+import com.gft.msmap.domain.exceptions.TruckAlreadyRegisteredException;
+import com.gft.msmap.domain.exceptions.TruckNotFoundException;
+import com.gft.msmap.domain.exceptions.WarehouseAlreadyRegisteredException;
 import org.junit.jupiter.api.Test;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +29,7 @@ public class MapStateTests {
         UUID truckId = UUID.randomUUID();
         int initialSize = mapState.getTrucks().size();
         mapState.registerTruck(truckId,new Location(1,1));
-        assertThatThrownBy(() -> mapState.registerTruck(truckId,new Location(2,2))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> mapState.registerTruck(truckId,new Location(2,2))).isInstanceOf(TruckAlreadyRegisteredException.class);
         assertThat(mapState.getTrucks())
                 .hasSize(initialSize+1);
     }
@@ -34,7 +38,7 @@ public class MapStateTests {
     void registerTruck_WhenGivenNegativeEdges_ShouldFail(){
         assertThatThrownBy(() ->
                 mapState.registerTruck(UUID.randomUUID(),new Location(-1,-1)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidLocationException.class);
     }
 
     @Test
@@ -49,7 +53,7 @@ public class MapStateTests {
     void updateTruckPosition_WhenGivenNonExistingTruckId_ShouldFail(){
         assertThatThrownBy(() ->
                 mapState.updateTruckPosition(UUID.randomUUID(), new Location(1,1)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(TruckNotFoundException.class);
     }
 
     @Test
@@ -58,7 +62,7 @@ public class MapStateTests {
         mapState.registerTruck(truckId,new Location(1,1));
         assertThatThrownBy(() ->
                 mapState.updateTruckPosition(UUID.randomUUID(), new Location(-1,-1)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidLocationException.class);
     }
 
     @Test
@@ -73,9 +77,15 @@ public class MapStateTests {
     }
 
     @Test
-    void registerWarehouse_WhenGivenNegativeEdges_ShouldFail(){
-        assertThatThrownBy(() -> mapState.registerWarehouse(
-                UUID.randomUUID(), "testWarehouse", new Location(-1,-1), WarehouseType.FACTORY))
-                .isInstanceOf(IllegalArgumentException.class);
+    void registerWarehouse_WhenGivenExistingWarehouse_ShouldThrow(){
+        UUID warehouseId = UUID.randomUUID();
+        int initialSize = mapState.getWarehouses().size();
+        mapState.registerWarehouse(warehouseId, "Warehouse 1", new Location(1,1), WarehouseType.FACTORY);
+
+        assertThatThrownBy(() -> mapState.registerWarehouse(warehouseId, "Warehouse 1", new Location(1,1), WarehouseType.FACTORY))
+                .isInstanceOf(WarehouseAlreadyRegisteredException.class);
+
+        assertThat(mapState.getWarehouses())
+                .hasSize(initialSize + 1);
     }
 }

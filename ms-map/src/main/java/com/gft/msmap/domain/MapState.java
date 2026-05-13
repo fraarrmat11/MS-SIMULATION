@@ -1,9 +1,13 @@
 package com.gft.msmap.domain;
 
+import com.gft.msmap.domain.exceptions.TruckAlreadyRegisteredException;
+import com.gft.msmap.domain.exceptions.TruckNotFoundException;
+import com.gft.msmap.domain.exceptions.WarehouseAlreadyRegisteredException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,21 +18,46 @@ public class MapState {
     List<WarehousePosition> warehouses = new ArrayList<>();
 
     public void registerTruck(UUID truckId, Location location){
-        if (this.trucks.stream().anyMatch(truckPosition -> truckPosition.getTruckId().equals(truckId))){
-            throw new IllegalArgumentException("Truck is already registered");
-        }
+        if (isTruckAlreadyRegistered(truckId))
+            throw new TruckAlreadyRegisteredException(truckId);
+
         trucks.add(new TruckPosition(truckId, location));
     }
 
     public void updateTruckPosition(UUID truckId, Location location){
-        TruckPosition truckPosition = trucks.stream().filter
-                (t -> t.getTruckId().equals(truckId)).
-                findFirst().orElseThrow(() -> new IllegalArgumentException("truck not found"));
-        trucks.remove(truckPosition);
-        registerTruck(truckId, location);
+        TruckPosition existingTruckPosition = findTruckOrThrow(truckId);
+        existingTruckPosition.updateLocation(location);
     }
 
     public void registerWarehouse(UUID warehouseId, String name, Location location, WarehouseType warehouseType){
+        if(isWarehouseAlreadyRegistered(warehouseId))
+            throw new WarehouseAlreadyRegisteredException(warehouseId);
+
         warehouses.add(new WarehousePosition(warehouseId, name, location, warehouseType));
+    }
+
+    public List<TruckPosition> getTrucks() {
+        return Collections.unmodifiableList(trucks);
+    }
+
+    public List<WarehousePosition> getWarehouses() {
+        return Collections.unmodifiableList(warehouses);
+    }
+
+    private boolean isTruckAlreadyRegistered(UUID truckId) {
+        return trucks.stream()
+                .anyMatch(t -> t.getTruckId().equals(truckId));
+    }
+
+    private boolean isWarehouseAlreadyRegistered(UUID warehouseId) {
+        return warehouses.stream()
+                .anyMatch(w -> w.getWarehouseId().equals(warehouseId));
+    }
+
+    private TruckPosition findTruckOrThrow(UUID truckId) {
+        return trucks.stream()
+                .filter(t -> t.getTruckId().equals(truckId))
+                .findFirst()
+                .orElseThrow(() -> new TruckNotFoundException(truckId));
     }
 }

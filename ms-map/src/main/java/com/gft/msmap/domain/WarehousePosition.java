@@ -16,6 +16,4 @@ public class WarehousePosition {
     private String name;
     private Location location;
     private WarehouseType type;
-
-
 }
