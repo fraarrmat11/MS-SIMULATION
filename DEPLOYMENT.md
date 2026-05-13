@@ -1,45 +1,73 @@
-# Basic AWS Deployment
+# AWS ECS Fargate Deployment
 
-This document defines the initial deployment contract for MS-SIMULATION.
+This document defines the deployment contract for MS-SIMULATION.
 
-The goal is a simple deployment, easy to understand and operate:
+The deployment target is based on containers and managed AWS runtime services:
 
-- One Amazon Linux EC2 instance.
-- Two executable Spring Boot JARs.
-- Two independent systemd services.
-- One shared Amazon RDS PostgreSQL database.
-- One shared CloudAMQP RabbitMQ broker.
-- One GitHub Actions workflow that builds, tests and deploys both modules together.
+- GitHub Actions builds Docker images for `ms-time` and `ms-map`.
+- Amazon ECR stores the Docker images.
+- Amazon ECS Fargate runs the containers.
+- `ms-time` and `ms-map` run as separate ECS services.
+- Amazon RDS PostgreSQL provides the shared database.
+- CloudAMQP provides the shared RabbitMQ broker.
+- IAM with GitHub OIDC grants GitHub Actions access to AWS without long-lived AWS keys.
+
+This replaces the previous EC2 + JAR + systemd deployment approach.
 
 ## Runtime Layout
 
-Both modules run on the same EC2 instance, but they keep separate runtime lifecycles.
+Both modules remain separate runtime units.
 
-| Module | JAR path | systemd service | HTTP port |
+| Module | ECR image | ECS service | Container port |
 | --- | --- | --- | --- |
-| `ms-time` | `/opt/ms-simulation/ms-time/ms-time.jar` | `ms-time.service` | `8081` |
-| `ms-map` | `/opt/ms-simulation/ms-map/ms-map.jar` | `ms-map.service` | `8080` |
+| `ms-time` | `<aws-account-id>.dkr.ecr.<region>.amazonaws.com/ms-time` | `ms-time-service` | `8081` |
+| `ms-map` | `<aws-account-id>.dkr.ecr.<region>.amazonaws.com/ms-map` | `ms-map-service` | `8080` |
 
-This means one module can be restarted without restarting the other one.
+Each module should have its own:
 
-## Configuration Files On EC2
+- Docker image.
+- ECR repository.
+- ECS task definition.
+- ECS service.
+- CloudWatch log group.
+- Container port.
 
-Production values must live outside the repository.
+The services may run in the same ECS cluster.
 
-Expected environment files:
+## Infrastructure
 
-| Module | Environment file |
-| --- | --- |
-| `ms-time` | `/etc/ms-simulation/ms-time.env` |
-| `ms-map` | `/etc/ms-simulation/ms-map.env` |
+The expected AWS and external components are:
 
-These files should contain values such as:
+- ECR repository for `ms-time`.
+- ECR repository for `ms-map`.
+- ECS cluster using Fargate.
+- ECS task definition for `ms-time`.
+- ECS task definition for `ms-map`.
+- ECS service for `ms-time`.
+- ECS service for `ms-map`.
+- RDS PostgreSQL database shared by both modules.
+- CloudAMQP RabbitMQ broker shared by both modules.
+- CloudWatch Logs for container logs.
+- IAM role assumable from GitHub Actions through OIDC.
 
-```bash
+An Application Load Balancer is optional. Use it if the HTTP endpoints must be reachable from outside ECS. If the services are only consumed internally, expose only the minimum networking required.
+
+Manual AWS setup is acceptable for this project. The repository should document what must be created, but it should not require Terraform, CDK or CloudFormation unless explicitly requested.
+
+## Configuration
+
+Production values must come from environment variables or AWS-managed secrets injected into the ECS task definitions.
+
+Expected runtime variables:
+
+```text
 SPRING_PROFILES_ACTIVE=prod
+SERVER_PORT=<module-port>
+
 SPRING_DATASOURCE_URL=jdbc:postgresql://<rds-endpoint>:5432/<database-name>
 SPRING_DATASOURCE_USERNAME=<database-user>
 SPRING_DATASOURCE_PASSWORD=<database-password>
+
 RABBITMQ_HOST=<cloudamqp-host>
 RABBITMQ_PORT=5671
 RABBITMQ_USERNAME=<cloudamqp-user>
@@ -48,81 +76,66 @@ RABBITMQ_VHOST=<cloudamqp-vhost>
 RABBITMQ_SSL_ENABLED=true
 ```
 
-Do not commit real values for database credentials, RabbitMQ credentials, AWS credentials or SSH keys.
+Recommended port values:
 
-## Infrastructure
+| Module | `SERVER_PORT` |
+| --- | --- |
+| `ms-time` | `8081` |
+| `ms-map` | `8080` |
 
-The basic infrastructure is:
+Do not commit real database credentials, RabbitMQ credentials, AWS credentials, CloudAMQP URLs or private keys.
 
-- EC2: runs both Spring Boot applications.
-- RDS PostgreSQL: stores persistence data for both modules.
-- CloudAMQP: provides RabbitMQ for application events.
-- GitHub Actions: builds, tests, copies the JARs to EC2 and restarts both services.
+## GitHub Actions
 
-RDS inbound access should be restricted to the EC2 security group whenever possible.
-SSH access to EC2 should be restricted to trusted IPs.
-Application ports should only be opened when they need to be reachable from outside the EC2 instance.
+GitHub Actions should:
 
-## GitHub Secrets
+1. Trigger on push to `main`.
+2. Set up Java 21.
+3. Run the Maven test suite.
+4. Build Docker images for `ms-time` and `ms-map`.
+5. Authenticate to AWS through GitHub OIDC.
+6. Push both images to ECR.
+7. Render or update ECS task definitions with the new image tags.
+8. Deploy both ECS services.
 
-The deployment workflow should use repository or environment secrets.
+Prefer GitHub OIDC over long-lived `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` secrets.
 
-Expected secrets:
-
-```text
-EC2_HOST
-EC2_USER
-EC2_SSH_KEY
-```
-
-If the workflow creates environment files remotely, it will also need:
+Expected GitHub configuration:
 
 ```text
-SPRING_DATASOURCE_URL
-SPRING_DATASOURCE_USERNAME
-SPRING_DATASOURCE_PASSWORD
-RABBITMQ_HOST
-RABBITMQ_PORT
-RABBITMQ_USERNAME
-RABBITMQ_PASSWORD
-RABBITMQ_VHOST
-RABBITMQ_SSL_ENABLED
+AWS_REGION
+AWS_ROLE_TO_ASSUME
+ECR_REPOSITORY_MS_TIME
+ECR_REPOSITORY_MS_MAP
+ECS_CLUSTER
+ECS_SERVICE_MS_TIME
+ECS_SERVICE_MS_MAP
+ECS_TASK_DEFINITION_MS_TIME
+ECS_TASK_DEFINITION_MS_MAP
 ```
 
-## Deployment Flow
+These may be GitHub repository variables or environment variables. Sensitive values should be GitHub secrets or stored in AWS Secrets Manager/SSM Parameter Store and referenced by ECS.
 
-The intended deployment flow is:
+## Networking And Security
 
-1. Push to `main`.
-2. GitHub Actions sets up Java 21.
-3. Maven runs tests for the repository.
-4. Maven packages `ms-time` and `ms-map`.
-5. GitHub Actions copies both JARs to EC2.
-6. GitHub Actions restarts `ms-time.service`.
-7. GitHub Actions restarts `ms-map.service`.
+Recommended security model:
 
-## Operational Commands
-
-Useful EC2 commands:
-
-```bash
-sudo systemctl status ms-time
-sudo systemctl status ms-map
-
-sudo systemctl restart ms-time
-sudo systemctl restart ms-map
-
-journalctl -u ms-time -f
-journalctl -u ms-map -f
-```
+- ECS tasks run in private subnets when possible.
+- ECS tasks have outbound access to ECR, CloudWatch Logs, RDS and CloudAMQP.
+- RDS inbound access is restricted to the ECS task security group.
+- Public HTTP access goes through an ALB if required.
+- GitHub Actions uses IAM/OIDC and only receives the minimum AWS permissions needed for ECR push and ECS deploy.
 
 ## Validation
 
 After deployment, validate at least:
 
-- `ms-time` is running on port `8081`.
-- `ms-map` is running on port `8080`.
+- `ms-time` ECS task is running and healthy.
+- `ms-map` ECS task is running and healthy.
 - Both services can connect to RDS PostgreSQL.
 - Both services can connect to CloudAMQP RabbitMQ.
+- `ms-time` responds on port `8081` through the chosen access path.
+- `ms-map` responds on port `8080` through the chosen access path.
 - `POST /tick/{days}` still advances the simulation day.
 - `time.advanced.v1` is still published with the expected payload.
+- Container logs are visible in CloudWatch Logs.
