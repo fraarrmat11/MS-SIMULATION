@@ -60,4 +60,11 @@ public class MapState {
                 .findFirst()
                 .orElseThrow(() -> new TruckNotFoundException(truckId));
     }
+
+    public static MapState restoreFromPersistence(List<TruckPosition> trucks, List<WarehousePosition> warehouses) {
+        MapState mapState = new MapState();
+        mapState.trucks.addAll(trucks);
+        mapState.warehouses.addAll(warehouses);
+        return mapState;
+    }
 }
