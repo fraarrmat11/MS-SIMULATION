@@ -6,6 +6,7 @@ import com.gft.msmap.application.service.impl.InMemoryMapStateHolder;
 import com.gft.msmap.domain.Location;
 import com.gft.msmap.domain.MapState;
 import com.gft.msmap.domain.exceptions.InvalidLocationException;
+import com.gft.msmap.domain.exceptions.TruckAlreadyRegisteredException;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -60,7 +61,7 @@ public class RegisterTruckUseCaseTest {
     }
 
     @Test
-    void shouldIgnoreAlreadyRegisteredTruck(){
+    void execute_WhenGivenExistingTruck_ShouldThrow(){
         //GIVEN
         MapState mapState = new MapState();
         UUID truckId = UUID.randomUUID();
@@ -73,14 +74,9 @@ public class RegisterTruckUseCaseTest {
 
         RegisterTruckUseCase useCase = new RegisterTruckUseCase(holder, repository);
 
-        //WHEN
-        useCase.execute(truckId, new Location(1,1));
-
         //THEN
-        assertThat(holder.get().getTrucks())
-                .hasSize(1)
-                .extracting("truckId")
-                .containsExactly(truckId);
+        assertThatThrownBy(() -> useCase.execute(truckId, new Location(1,1)))
+                .isInstanceOf(TruckAlreadyRegisteredException.class);
 
         verify(repository, never()).save(any());
     }
