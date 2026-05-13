@@ -5,6 +5,7 @@ import com.gft.msmap.application.service.MapStateHolder;
 import com.gft.msmap.application.service.impl.InMemoryMapStateHolder;
 import com.gft.msmap.domain.Location;
 import com.gft.msmap.domain.MapState;
+import com.gft.msmap.domain.exceptions.InvalidLocationException;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,7 +54,7 @@ public class RegisterTruckUseCaseTest {
 
         RegisterTruckUseCase useCase = new RegisterTruckUseCase(holder, repository);
         //THEN
-        assertThatThrownBy(() -> useCase.execute(truckId, new Location(-1,-1))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> useCase.execute(truckId, new Location(-1,-1))).isInstanceOf(InvalidLocationException.class);
 
         verify(repository, never()).save(any());
     }

@@ -1,5 +1,6 @@
 package com.gft.msmap.domain;
 
+import com.gft.msmap.domain.exceptions.InvalidLocationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -22,14 +23,14 @@ class ValueObjectsTest {
     void createsLocationWithNegativeXEdge(){
         assertThatThrownBy(() ->
                 new Location(-1, 1))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidLocationException.class);
     }
 
     @Test
     void createsLocationWithNegativeYEdge(){
         assertThatThrownBy(() ->
                 new Location(1, -1))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidLocationException.class);
     }
 
     @Test
