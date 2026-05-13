@@ -1,0 +1,84 @@
+{
+  "family": "ms-map",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<aws-account-id>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<aws-account-id>:role/ms-map-task-role",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "containerDefinitions": [
+    {
+      "name": "ms-map",
+      "image": "<aws-account-id>.dkr.ecr.<aws-region>.amazonaws.com/ms-map:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "prod"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "RABBITMQ_PORT",
+          "value": "5671"
+        },
+        {
+          "name": "RABBITMQ_SSL_ENABLED",
+          "value": "true"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "SPRING_DATASOURCE_URL",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/db/url"
+        },
+        {
+          "name": "SPRING_DATASOURCE_USERNAME",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/db/username"
+        },
+        {
+          "name": "SPRING_DATASOURCE_PASSWORD",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/db/password"
+        },
+        {
+          "name": "RABBITMQ_HOST",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/rabbitmq/host"
+        },
+        {
+          "name": "RABBITMQ_USERNAME",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/rabbitmq/username"
+        },
+        {
+          "name": "RABBITMQ_PASSWORD",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/rabbitmq/password"
+        },
+        {
+          "name": "RABBITMQ_VHOST",
+          "valueFrom": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/ms-simulation/prod/rabbitmq/vhost"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ms-map",
+          "awslogs-region": "<aws-region>",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
