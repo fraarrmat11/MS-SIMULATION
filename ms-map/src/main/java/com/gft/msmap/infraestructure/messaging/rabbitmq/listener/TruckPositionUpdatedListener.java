@@ -15,9 +15,14 @@ public class TruckPositionUpdatedListener {
 
     @RabbitListener(queues = RabbitMQConfig.TRUCK_POSITION_UPDATED_QUEUE)
     public void onEvent(TruckPositionUpdatedEvent event) {
-        useCase.execute(
-                event.getTruckId(),
-                event.getLocation()
-        );
+        try{
+            useCase.execute(
+                    event.getTruckId(),
+                    event.getLocation()
+            );
+        } catch (IllegalArgumentException e){
+            System.out.println(e.getMessage() + event.getTruckId());
+        }
+
     }
 }
