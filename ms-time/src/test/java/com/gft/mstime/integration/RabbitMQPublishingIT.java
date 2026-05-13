@@ -3,7 +3,6 @@ package com.gft.mstime.integration;
 import com.gft.mstime.infraestructure.config.RabbitMQConfig;
 import com.gft.mstime.infraestructure.persistence.jpa.SpringDataSimulationClockRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -39,7 +38,6 @@ class RabbitMQPublishingIT {
     }
 
     @Test
-    @DisplayName("POST /tick/1 - publica un mensaje en la queue con el payload correcto")
     void advanceTime_publishesMessageToQueue() throws Exception {
         mockMvc.perform(post("/tick/1"))
                 .andExpect(status().isOk());
@@ -57,7 +55,6 @@ class RabbitMQPublishingIT {
     }
 
     @Test
-    @DisplayName("POST /tick/5 - el mensaje publicado refleja los días correctos")
     void advanceTime_fiveDays_messageContainsCorrectDays() throws Exception {
         mockMvc.perform(post("/tick/5"))
                 .andExpect(status().isOk());
@@ -73,7 +70,6 @@ class RabbitMQPublishingIT {
     }
 
     @Test
-    @DisplayName("Dos ticks consecutivos publican dos mensajes con días acumulados")
     void twoTicks_publishesTwoMessagesWithAccumulatedDays() throws Exception {
         mockMvc.perform(post("/tick/1")).andExpect(status().isOk());
         mockMvc.perform(post("/tick/2")).andExpect(status().isOk());
