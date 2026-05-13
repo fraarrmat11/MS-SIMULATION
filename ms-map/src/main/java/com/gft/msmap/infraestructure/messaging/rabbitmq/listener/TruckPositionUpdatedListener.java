@@ -23,6 +23,5 @@ public class TruckPositionUpdatedListener {
         } catch (IllegalArgumentException e){
             System.out.println(e.getMessage() + event.getTruckId());
         }
-
     }
 }

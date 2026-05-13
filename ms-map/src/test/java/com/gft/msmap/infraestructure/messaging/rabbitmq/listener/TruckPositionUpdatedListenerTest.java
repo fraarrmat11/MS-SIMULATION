@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,5 +32,21 @@ class TruckPositionUpdatedListenerTest {
         listener.onEvent(event);
 
         verify(useCase).execute(event.getTruckId(),event.getLocation());
+    }
+
+    @Test
+    void shouldNotPropagateIllegalArgumentException() {
+        TruckPositionUpdatedEvent event =
+                new TruckPositionUpdatedEvent(UUID.randomUUID(), new Location(1,1));
+
+        doThrow(new IllegalArgumentException("Truck not found: "))
+                .when(useCase)
+                .execute(event.getTruckId(), event.getLocation());
+
+        assertDoesNotThrow(
+                () -> listener.onEvent(event)
+        );
+
+        verify(useCase).execute(event.getTruckId(), event.getLocation());
     }
 }
