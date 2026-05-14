@@ -110,7 +110,7 @@ AWS_REGION
 AWS_ROLE_TO_ASSUME
 ECR_REPOSITORY_MS_TIME=ms-time-2026-atmy
 ECR_REPOSITORY_MS_MAP=ms-map-2026-atmy
-ECS_CLUSTER=ms-simulation-cluster-2026-atmy
+ECS_CLUSTER=junior-workshop-2026-vlc
 ECS_SERVICE_MS_TIME=ms-time-service-2026-atmy
 ECS_SERVICE_MS_MAP=ms-map-service-2026-atmy
 ECS_TASK_DEFINITION_MS_TIME
