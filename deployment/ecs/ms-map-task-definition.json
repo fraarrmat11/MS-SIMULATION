@@ -74,7 +74,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/ms-map",
+          "awslogs-group": "/ecs/ms-map-2026-atmy",
           "awslogs-region": "eu-west-1",
           "awslogs-stream-prefix": "ecs"
         }
