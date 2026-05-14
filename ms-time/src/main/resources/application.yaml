@@ -28,3 +28,10 @@ spring:
       enabled: ${RABBITMQ_SSL_ENABLED:false}
 server:
   port: 8081
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  packages-to-scan: com.gft.mstime.infraestructure.web

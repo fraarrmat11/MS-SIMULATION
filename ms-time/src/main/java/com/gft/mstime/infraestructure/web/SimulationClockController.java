@@ -6,6 +6,8 @@ import com.gft.mstime.application.result.TimeAdvancedResult;
 import com.gft.mstime.application.usecase.GetCurrentSimulationDayUseCase;
 import com.gft.mstime.infraestructure.web.response.CurrentSimulationDayResponse;
 import com.gft.mstime.infraestructure.web.response.TimeAdvancedResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.Objects;
 
 @RequestMapping("tick")
 @RestController
+@Tag(name = "Time", description = "API for time operations")
 public class SimulationClockController {
 
     private final AdvanceTimeUseCase advanceTimeUseCase;
@@ -32,6 +35,7 @@ public class SimulationClockController {
     }
 
     @GetMapping("current")
+    @Operation(summary = "Getter to know the current day")
     public ResponseEntity<CurrentSimulationDayResponse> getCurrentSimulationDay() {
         int currentDay = getCurrentSimulationDayUseCase.getCurrentSimulationDay();
 
@@ -39,6 +43,7 @@ public class SimulationClockController {
     }
 
     @PostMapping("{days}")
+    @Operation(summary = "Post to advance X days")
     public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @PathVariable int days) {
         if(days < 1){
             return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
