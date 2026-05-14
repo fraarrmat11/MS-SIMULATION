@@ -63,4 +63,34 @@ class SimulationDayTest {
         assertThatThrownBy(() -> simulationDay.advanceBy(-2))
                 .isInstanceOf(InvalidDaysToAdvanceException.class);
     }
+
+    @Test
+    void equals_WhenSameInstance_ShouldBeEqual() {
+        SimulationDay day = SimulationDay.fromDayNumber(3);
+
+        assertThat(day.equals(day)).isTrue();
+    }
+
+    @Test
+    void equals_WhenNull_ShouldNotBeEqual() {
+        SimulationDay day = SimulationDay.fromDayNumber(3);
+
+        assertThat(day.equals(null)).isFalse();
+    }
+
+    @Test
+    void equals_WhenDifferentDayNumber_ShouldNotBeEqual() {
+        SimulationDay day1 = SimulationDay.fromDayNumber(3);
+        SimulationDay day2 = SimulationDay.fromDayNumber(5);
+
+        assertThat(day1).isNotEqualTo(day2);
+    }
+
+    @Test
+    void hashCode_WhenSameDayNumber_ShouldReturnSameHash() {
+        SimulationDay day1 = SimulationDay.fromDayNumber(3);
+        SimulationDay day2 = SimulationDay.fromDayNumber(3);
+
+        assertThat(day1.hashCode()).isEqualTo(day2.hashCode());
+    }
 }

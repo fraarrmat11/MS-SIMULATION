@@ -74,4 +74,22 @@ class TimeAdvancedEventTest {
         assertThat(first).isNotEqualTo(second);
     }
 
+    @Test
+    void equals_WhenNull_ShouldNotBeEqual() {
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1)
+        );
+
+        assertThat(event.equals(null)).isFalse();
+    }
+
+    @Test
+    void hashCode_WhenCalledOnSameInstance_ShouldBeConsistent() {
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1)
+        );
+
+        assertThat(event.hashCode()).isEqualTo(event.eventId().hashCode());
+    }
+
 }
