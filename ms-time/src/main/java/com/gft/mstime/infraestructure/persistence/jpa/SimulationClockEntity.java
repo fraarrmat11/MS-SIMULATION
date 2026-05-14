@@ -1,5 +1,6 @@
 package com.gft.mstime.infraestructure.persistence.jpa;
 
+import com.gft.mstime.infraestructure.persistence.jpa.exceptions.InvalidCurrentDayException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -22,7 +23,7 @@ public class SimulationClockEntity {
 
     public SimulationClockEntity(Long id, int currentDay) {
         if (currentDay < 0) {
-            throw new IllegalArgumentException("Current day cannot be negative");
+            throw new InvalidCurrentDayException(currentDay);
         }
         this.id = Objects.requireNonNull(id, "id cannot be null");
         this.currentDay = currentDay;
@@ -38,7 +39,7 @@ public class SimulationClockEntity {
 
     public void updateCurrentDay(int currentDay) {
         if (currentDay < 0) {
-            throw new IllegalArgumentException("Current day cannot be negative");
+            throw new InvalidCurrentDayException(currentDay);
         }
         this.currentDay = currentDay;
     }
