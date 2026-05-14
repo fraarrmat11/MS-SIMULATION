@@ -2,8 +2,8 @@
   "family": "ms-time-2026-atmy",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "512",
-  "memory": "1024",
+  "cpu": "256",
+  "memory": "512",
   "executionRoleArn": "arn:aws:iam::822414985516:role/ecsTaskExecutionRole-2026-atmy",
   "taskRoleArn": "arn:aws:iam::822414985516:role/ms-time-task-role-2026-atmy",
   "runtimePlatform": {
