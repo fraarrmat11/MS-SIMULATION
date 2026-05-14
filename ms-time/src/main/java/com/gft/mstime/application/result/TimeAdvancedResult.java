@@ -15,8 +15,8 @@ public record TimeAdvancedResult(
     public static TimeAdvancedResult from(TimeAdvancedEvent event) {
         return new TimeAdvancedResult(
                 event.eventId(),
-                event.previousDay(),
-                event.currentDay(),
+                event.previousDay().dayNumber(),
+                event.currentDay().dayNumber(),
                 event.daysAdvanced(),
                 event.occurredAt()
         );

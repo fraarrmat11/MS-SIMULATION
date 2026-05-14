@@ -1,5 +1,6 @@
 package com.gft.mstime.infraestructure.messaging.rabbitmq.message;
 
+import com.gft.mstime.domain.SimulationDay;
 import com.gft.mstime.domain.TimeAdvancedEvent;
 import org.junit.jupiter.api.Test;
 
@@ -10,13 +11,13 @@ class TimeAdvancedMessageTest {
 
     @Test
     void from_WhenGivenTimeAdvancedEvent_ShouldMapAllFields() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1));
 
         TimeAdvancedMessage message = TimeAdvancedMessage.from(event);
 
         assertThat(message.eventId()).isEqualTo(event.eventId());
-        assertThat(message.previousDay()).isEqualTo(event.previousDay());
-        assertThat(message.currentDay()).isEqualTo(event.currentDay());
+        assertThat(message.previousDay()).isEqualTo(event.previousDay().dayNumber());
+        assertThat(message.currentDay()).isEqualTo(event.currentDay().dayNumber());
         assertThat(message.daysAdvanced()).isEqualTo(event.daysAdvanced());
         assertThat(message.occurredAt()).isEqualTo(event.occurredAt());
     }
@@ -30,7 +31,7 @@ class TimeAdvancedMessageTest {
 
     @Test
     void records_WhenGivenSameValues_ShouldBeEqual() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1));
 
         TimeAdvancedMessage firstMessage = TimeAdvancedMessage.from(event);
         TimeAdvancedMessage secondMessage = TimeAdvancedMessage.from(event);

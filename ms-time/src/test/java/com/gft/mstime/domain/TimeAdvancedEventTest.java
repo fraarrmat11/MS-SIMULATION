@@ -1,5 +1,6 @@
 package com.gft.mstime.domain;
 
+import com.gft.mstime.domain.exceptions.InvalidTimeAdvanceException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -11,15 +12,17 @@ class TimeAdvancedEventTest {
 
     @Test
     void occurred_WhenGivenCorrectArguments_ShouldCreateTimeAdvancedEventWithExpectedPayload() {
+        SimulationDay previousDay = SimulationDay.fromDayNumber(2);
+        SimulationDay currentDay = SimulationDay.fromDayNumber(5);
         Instant beforeEventCreation = Instant.now();
 
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(previousDay, currentDay);
 
         Instant afterEventCreation = Instant.now();
 
         assertThat(event.eventId()).isNotNull();
-        assertThat(event.previousDay()).isEqualTo(2);
-        assertThat(event.currentDay()).isEqualTo(5);
+        assertThat(event.previousDay()).isEqualTo(SimulationDay.fromDayNumber(2));
+        assertThat(event.currentDay()).isEqualTo(SimulationDay.fromDayNumber(5));
         assertThat(event.daysAdvanced()).isEqualTo(3);
         assertThat(event.occurredAt())
                 .isAfterOrEqualTo(beforeEventCreation)
@@ -28,44 +31,47 @@ class TimeAdvancedEventTest {
 
     @Test
     void occurred_WhenCalledForDifferentEvents_ShouldCreateDifferentEventIds() {
-        TimeAdvancedEvent firstEvent = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
-        TimeAdvancedEvent secondEvent = TimeAdvancedEvent.timeAdvanced(1, 2, 1);
+        SimulationDay day0 = SimulationDay.fromDayNumber(0);
+        SimulationDay day1 = SimulationDay.fromDayNumber(1);
+        SimulationDay day2 = SimulationDay.fromDayNumber(2);
+
+        TimeAdvancedEvent firstEvent = TimeAdvancedEvent.of(day0, day2);
+        TimeAdvancedEvent secondEvent = TimeAdvancedEvent.of(day1, day2);
 
         assertThat(firstEvent.eventId()).isNotEqualTo(secondEvent.eventId());
     }
 
     @Test
-    void occurred_WhenGivenNegativePreviousDay_ShouldThrowException() {
-        assertThatThrownBy(() -> TimeAdvancedEvent.timeAdvanced(-1, 1, 2))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Previous day cannot be negative");
+    void of_WhenCurrentDayEqualsPreviousDay_ShouldThrowException() {
+        assertThatThrownBy(() -> TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(5), SimulationDay.fromDayNumber(5)
+        )).isInstanceOf(InvalidTimeAdvanceException.class);
     }
 
     @Test
-    void occurred_WhenGivenNegativeCurrentDay_ShouldThrowException() {
-        assertThatThrownBy(() -> TimeAdvancedEvent.timeAdvanced(0, -1, 1))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Current day cannot be negative");
+    void of_WhenCurrentDayBeforePreviousDay_ShouldThrowException() {
+        assertThatThrownBy(() -> TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(5), SimulationDay.fromDayNumber(2)
+        )).isInstanceOf(InvalidTimeAdvanceException.class);
     }
 
     @Test
-    void occurred_WhenGivenZeroDaysAdvanced_ShouldThrowException() {
-        assertThatThrownBy(() -> TimeAdvancedEvent.timeAdvanced(0, 0, 0))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days advanced must be greater than zero");
+    void of_WhenSameInstance_ShouldBeEqual() {
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1)
+        );
+        assertThat(event).isEqualTo(event);
     }
 
     @Test
-    void occurred_WhenGivenNegativeDaysAdvanced_ShouldThrowException() {
-        assertThatThrownBy(() -> TimeAdvancedEvent.timeAdvanced(2, 1, -1))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days advanced must be greater than zero");
+    void equals_WhenDifferentInstances_ShouldNotBeEqual() {
+        TimeAdvancedEvent first = TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1)
+        );
+        TimeAdvancedEvent second = TimeAdvancedEvent.of(
+                SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1)
+        );
+        assertThat(first).isNotEqualTo(second);
     }
 
-    @Test
-    void occurred_WhenGivenInconsistentCurrentDay_ShouldThrowException() {
-        assertThatThrownBy(() -> TimeAdvancedEvent.timeAdvanced(1, 4, 1))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Current day must match previous day plus days advanced");
-    }
 }

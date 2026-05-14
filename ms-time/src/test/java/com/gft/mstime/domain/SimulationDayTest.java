@@ -1,5 +1,7 @@
 package com.gft.mstime.domain;
 
+import com.gft.mstime.domain.exceptions.InvalidDaysToAdvanceException;
+import com.gft.mstime.domain.exceptions.InvalidSimulationDayException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,8 +26,7 @@ class SimulationDayTest {
     @Test
     void fromDayNumber_WhenGivenNegativeDayNumber_ShouldThrowException() {
         assertThatThrownBy(() -> SimulationDay.fromDayNumber(-1))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Simulation day cannot be negative");
+                .isInstanceOf(InvalidSimulationDayException.class);
     }
 
     @Test
@@ -52,8 +53,7 @@ class SimulationDayTest {
         SimulationDay simulationDay = SimulationDay.dayZero();
 
         assertThatThrownBy(() -> simulationDay.advanceBy(0))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days to advance must be greater than zero");
+                .isInstanceOf(InvalidDaysToAdvanceException.class);
     }
 
     @Test
@@ -61,7 +61,6 @@ class SimulationDayTest {
         SimulationDay simulationDay = SimulationDay.dayZero();
 
         assertThatThrownBy(() -> simulationDay.advanceBy(-2))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days to advance must be greater than zero");
+                .isInstanceOf(InvalidDaysToAdvanceException.class);
     }
 }

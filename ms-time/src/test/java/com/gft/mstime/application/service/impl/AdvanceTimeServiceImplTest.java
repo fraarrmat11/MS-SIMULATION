@@ -8,6 +8,8 @@ import com.gft.mstime.application.service.AdvanceTimeService;
 import com.gft.mstime.domain.SimulationClock;
 import com.gft.mstime.domain.SimulationDay;
 import com.gft.mstime.domain.TimeAdvancedEvent;
+import com.gft.mstime.domain.exceptions.InvalidDaysToAdvanceException;
+import com.gft.mstime.domain.exceptions.InvalidSimulationDayException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -54,8 +56,8 @@ class AdvanceTimeServiceImplTest {
 
         TimeAdvancedEvent publishedEvent = publishedEventCaptor.getValue();
         assertThat(publishedEvent.eventId()).isEqualTo(result.eventId());
-        assertThat(publishedEvent.previousDay()).isEqualTo(result.previousDay());
-        assertThat(publishedEvent.currentDay()).isEqualTo(result.currentDay());
+        assertThat(publishedEvent.previousDay().dayNumber()).isEqualTo(result.previousDay());
+        assertThat(publishedEvent.currentDay().dayNumber()).isEqualTo(result.currentDay());
         assertThat(publishedEvent.daysAdvanced()).isEqualTo(result.daysAdvanced());
         assertThat(publishedEvent.occurredAt()).isEqualTo(result.occurredAt());
 
@@ -91,8 +93,7 @@ class AdvanceTimeServiceImplTest {
         when(simulationClockRepository.load()).thenReturn(simulationClock);
 
         assertThatThrownBy(() -> advanceTimeService.advanceTime(new AdvanceTimeCommand(0)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days to advance must be greater than zero");
+                .isInstanceOf(InvalidDaysToAdvanceException.class);
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(5);
 
@@ -107,8 +108,7 @@ class AdvanceTimeServiceImplTest {
         when(simulationClockRepository.load()).thenReturn(simulationClock);
 
         assertThatThrownBy(() -> advanceTimeService.advanceTime(new AdvanceTimeCommand(-1)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days to advance must be greater than zero");
+                .isInstanceOf(InvalidDaysToAdvanceException.class);
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(5);
 

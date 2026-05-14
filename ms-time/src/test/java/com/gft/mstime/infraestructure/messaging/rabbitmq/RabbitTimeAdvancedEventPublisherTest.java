@@ -1,9 +1,6 @@
 package com.gft.mstime.infraestructure.messaging.rabbitmq;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gft.mstime.domain.SimulationDay;
 import com.gft.mstime.domain.TimeAdvancedEvent;
 import com.gft.mstime.infraestructure.config.RabbitMQConfig;
 import com.gft.mstime.infraestructure.messaging.rabbitmq.message.TimeAdvancedMessage;
@@ -35,7 +32,7 @@ class RabbitTimeAdvancedEventPublisherTest {
 
     @Test
     void publish_WhenGivenTimeAdvancedEvent_ShouldSendMessage() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(SimulationDay.fromDayNumber(2),SimulationDay.fromDayNumber(5));
 
         publisher.publish(event);
 
@@ -51,7 +48,7 @@ class RabbitTimeAdvancedEventPublisherTest {
         TimeAdvancedMessage message = messageCaptor.getValue();
 
         assertThat(message.eventId()).isEqualTo(event.eventId());
-        assertThat(message.currentDay()).isEqualTo(event.currentDay());
+        assertThat(message.currentDay()).isEqualTo(event.currentDay().dayNumber());
 
         verifyNoMoreInteractions(rabbitTemplate);
     }
@@ -68,7 +65,7 @@ class RabbitTimeAdvancedEventPublisherTest {
     @Test
     void publish_WhenAmqpExceptionOccurs_ShouldThrowIllegalStateException() {
         // Arrange
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(SimulationDay.fromDayNumber(2),SimulationDay.fromDayNumber(3));
 
         doThrow(new AmqpException("Connection failed"))
                 .when(rabbitTemplate)

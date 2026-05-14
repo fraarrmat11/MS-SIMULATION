@@ -19,8 +19,8 @@ public record TimeAdvancedMessage(
 
         return new TimeAdvancedMessage(
                 event.eventId(),
-                event.previousDay(),
-                event.currentDay(),
+                event.previousDay().dayNumber(),
+                event.currentDay().dayNumber(),
                 event.daysAdvanced(),
                 event.occurredAt()
         );
