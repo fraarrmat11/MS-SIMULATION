@@ -1,5 +1,6 @@
 package com.gft.mstime.domain;
 
+import com.gft.mstime.domain.exceptions.InvalidDaysToAdvanceException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,8 +36,8 @@ class SimulationClockTest {
         TimeAdvancedEvent event = simulationClock.advanceDay(1);
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(1);
-        assertThat(event.previousDay()).isZero();
-        assertThat(event.currentDay()).isEqualTo(1);
+        assertThat(event.previousDay().dayNumber()).isZero();
+        assertThat(event.currentDay().dayNumber()).isEqualTo(1);
         assertThat(event.daysAdvanced()).isEqualTo(1);
         assertThat(event.eventId()).isNotNull();
         assertThat(event.occurredAt()).isNotNull();
@@ -49,8 +50,8 @@ class SimulationClockTest {
         TimeAdvancedEvent event = simulationClock.advanceDay(3);
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(8);
-        assertThat(event.previousDay()).isEqualTo(5);
-        assertThat(event.currentDay()).isEqualTo(8);
+        assertThat(event.previousDay().dayNumber()).isEqualTo(5);
+        assertThat(event.currentDay().dayNumber()).isEqualTo(8);
         assertThat(event.daysAdvanced()).isEqualTo(3);
     }
 
@@ -61,10 +62,10 @@ class SimulationClockTest {
         TimeAdvancedEvent firstEvent = simulationClock.advanceDay(2);
         TimeAdvancedEvent secondEvent = simulationClock.advanceDay(3);
 
-        assertThat(firstEvent.previousDay()).isZero();
-        assertThat(firstEvent.currentDay()).isEqualTo(2);
-        assertThat(secondEvent.previousDay()).isEqualTo(2);
-        assertThat(secondEvent.currentDay()).isEqualTo(5);
+        assertThat(firstEvent.previousDay().dayNumber()).isZero();
+        assertThat(firstEvent.currentDay().dayNumber()).isEqualTo(2);
+        assertThat(secondEvent.previousDay().dayNumber()).isEqualTo(2);
+        assertThat(secondEvent.currentDay().dayNumber()).isEqualTo(5);
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(5);
     }
 
@@ -73,8 +74,7 @@ class SimulationClockTest {
         SimulationClock simulationClock = SimulationClock.fromCurrentDay(SimulationDay.fromDayNumber(4));
 
         assertThatThrownBy(() -> simulationClock.advanceDay(0))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Days to advance must be greater than zero");
+                .isInstanceOf(InvalidDaysToAdvanceException.class);
 
         assertThat(simulationClock.getCurrentDay().dayNumber()).isEqualTo(4);
     }

@@ -1,5 +1,6 @@
 package com.gft.mstime.application.result;
 
+import com.gft.mstime.domain.SimulationDay;
 import com.gft.mstime.domain.TimeAdvancedEvent;
 import org.junit.jupiter.api.Test;
 
@@ -9,20 +10,23 @@ class TimeAdvancedResultTest {
 
     @Test
     void from_WhenGivenTimeAdvancedEvent_ShouldMapAllFields() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(2, 5, 3);
+        SimulationDay previousDay = SimulationDay.fromDayNumber(2);
+        SimulationDay currentDay = SimulationDay.fromDayNumber(5);
+
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(previousDay, currentDay);
 
         TimeAdvancedResult result = TimeAdvancedResult.from(event);
 
         assertThat(result.eventId()).isEqualTo(event.eventId());
-        assertThat(result.previousDay()).isEqualTo(event.previousDay());
-        assertThat(result.currentDay()).isEqualTo(event.currentDay());
+        assertThat(result.previousDay()).isEqualTo(event.previousDay().dayNumber());
+        assertThat(result.currentDay()).isEqualTo(event.currentDay().dayNumber());
         assertThat(result.daysAdvanced()).isEqualTo(event.daysAdvanced());
         assertThat(result.occurredAt()).isEqualTo(event.occurredAt());
     }
 
     @Test
     void records_WhenGivenSameValues_ShouldBeEqual() {
-        TimeAdvancedEvent event = TimeAdvancedEvent.timeAdvanced(0, 1, 1);
+        TimeAdvancedEvent event = TimeAdvancedEvent.of(SimulationDay.fromDayNumber(0), SimulationDay.fromDayNumber(1));
 
         TimeAdvancedResult firstResult = TimeAdvancedResult.from(event);
         TimeAdvancedResult secondResult = TimeAdvancedResult.from(event);

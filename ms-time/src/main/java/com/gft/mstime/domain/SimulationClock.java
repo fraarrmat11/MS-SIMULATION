@@ -20,15 +20,9 @@ public final class SimulationClock {
 
     public TimeAdvancedEvent advanceDay(int daysToAdvance) {
         SimulationDay previousDay = currentDay;
-        SimulationDay advancedDay = currentDay.advanceBy(daysToAdvance);
+        currentDay = currentDay.advanceBy(daysToAdvance);
 
-        currentDay = advancedDay;
-
-        return TimeAdvancedEvent.timeAdvanced(
-                previousDay.dayNumber(),
-                advancedDay.dayNumber(),
-                daysToAdvance
-        );
+        return TimeAdvancedEvent.of(previousDay, currentDay);
     }
 
     public SimulationDay getCurrentDay() {

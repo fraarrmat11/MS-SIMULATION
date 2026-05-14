@@ -1,5 +1,10 @@
 package com.gft.mstime.domain;
 
+import com.gft.mstime.domain.exceptions.InvalidDaysToAdvanceException;
+import com.gft.mstime.domain.exceptions.InvalidSimulationDayException;
+
+import java.util.Objects;
+
 public final class SimulationDay {
 
     private static final int INITIAL_SIMULATION_DAY_NUMBER = 0;
@@ -8,7 +13,7 @@ public final class SimulationDay {
 
     private SimulationDay(int dayNumber) {
         if (dayNumber < INITIAL_SIMULATION_DAY_NUMBER) {
-            throw new IllegalArgumentException("Simulation day cannot be negative");
+            throw new InvalidSimulationDayException(dayNumber);
         }
         this.dayNumber = dayNumber;
     }
@@ -23,12 +28,28 @@ public final class SimulationDay {
 
     public SimulationDay advanceBy(int daysToAdvance) {
         if (daysToAdvance <= 0) {
-            throw new IllegalArgumentException("Days to advance must be greater than zero");
+            throw new InvalidDaysToAdvanceException(daysToAdvance);
         }
         return new SimulationDay(dayNumber + daysToAdvance);
     }
 
     public int dayNumber() {
         return dayNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SimulationDay other)) return false;
+        return dayNumber == other.dayNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(dayNumber);
+    }
+
+    public boolean isBefore(SimulationDay other) {
+        return this.dayNumber < other.dayNumber();
     }
 }
