@@ -1,5 +1,6 @@
 package com.gft.mstime.infraestructure.persistence.jpa;
 
+import com.gft.mstime.infraestructure.persistence.jpa.exceptions.InvalidCurrentDayException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,8 +34,7 @@ class SimulationClockEntityTest {
     @Test
     void constructor_WhenGivenNegativeCurrentDay_ShouldThrowException() {
         assertThatThrownBy(() -> new SimulationClockEntity(1L, -1))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Current day cannot be negative");
+                .isInstanceOf(InvalidCurrentDayException.class);
     }
 
     @Test
@@ -51,8 +51,7 @@ class SimulationClockEntityTest {
         SimulationClockEntity entity = new SimulationClockEntity(1L, 3);
 
         assertThatThrownBy(() -> entity.updateCurrentDay(-1))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Current day cannot be negative");
+                .isInstanceOf(InvalidCurrentDayException.class);
 
         assertThat(entity.getCurrentDay()).isEqualTo(3);
     }
