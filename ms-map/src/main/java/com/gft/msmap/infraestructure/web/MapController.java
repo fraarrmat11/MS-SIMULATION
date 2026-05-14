@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/map")
 @AllArgsConstructor
-@Tag(name = "Map", description = "Api para operaciones sobre el mapa de estado")
+@Tag(name = "Map", description = "API for operations on map")
 public class MapController {
     private final GetMapStateService getMapStateService;
 
     @GetMapping
-    @Operation(summary = "Obtener mapa de estados completo")
+    @Operation(summary = "Obtain complete map")
     @ApiResponse(
             responseCode = "200",
-            description = "Estado del mapa obtenido correctamente",
+            description = "Map state obtained correctly",
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = MapState.class)
