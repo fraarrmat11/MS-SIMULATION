@@ -39,19 +39,32 @@ public class SimulationClockController {
     @GetMapping("current")
     @Operation(summary = "Getter to know the current day")
     public ResponseEntity<CurrentSimulationDayResponse> getCurrentSimulationDay() {
+        log.info("HTTP GET /tick/current received");
+
         int currentDay = getCurrentSimulationDayUseCase.getCurrentSimulationDay();
 
+        log.info("HTTP GET /tick/current completed: status=200, currentDay={}", currentDay);
         return ResponseEntity.ok(new CurrentSimulationDayResponse(currentDay));
     }
 
     @PostMapping("{days}")
     @Operation(summary = "Post to advance X days")
     public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @PathVariable int days) {
+        log.info("HTTP POST /tick/{} received", days);
+
         if (days < 1) {
-            log.warn("Invalid advanceTime request: days={} must be >= 1", days);
+            log.warn("HTTP POST /tick/{} rejected: status=416, reason=days_must_be_greater_than_zero", days);
             return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
         }
+
         TimeAdvancedResult result = advanceTimeUseCase.advanceTime(new AdvanceTimeCommand(days));
+        log.info(
+                "HTTP POST /tick/{} completed: status=200, previousDay={}, currentDay={}, eventId={}",
+                days,
+                result.previousDay(),
+                result.currentDay(),
+                result.eventId()
+        );
         return ResponseEntity.ok(TimeAdvancedResponse.from(result));
     }
 }
