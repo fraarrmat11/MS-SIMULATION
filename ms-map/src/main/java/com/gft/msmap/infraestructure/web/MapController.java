@@ -8,10 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/map")
 @AllArgsConstructor
@@ -30,6 +32,15 @@ public class MapController {
             )
     )
     public MapState getMapState(){
-        return getMapStateService.getMapState();
+        log.info("HTTP GET /map received");
+
+        MapState mapState = getMapStateService.getMapState();
+
+        log.info(
+                "HTTP GET /map completed: status=200, trucks={}, warehouses={}",
+                mapState.getTrucks().size(),
+                mapState.getWarehouses().size()
+        );
+        return mapState;
     }
 }
