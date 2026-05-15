@@ -33,3 +33,9 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
   packages-to-scan: com.gft.msmap.infraestructure.web
+
+logging:
+  level:
+    root: INFO
+    com.gft.msmap.application: INFO
+    com.gft.msmap.infraestructure: DEBUG

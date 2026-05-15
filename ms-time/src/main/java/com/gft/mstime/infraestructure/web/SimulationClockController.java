@@ -9,12 +9,14 @@ import com.gft.mstime.infraestructure.web.response.TimeAdvancedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
+@Slf4j
 @RequestMapping("tick")
 @RestController
 @Tag(name = "Time", description = "API for time operations")
@@ -45,7 +47,8 @@ public class SimulationClockController {
     @PostMapping("{days}")
     @Operation(summary = "Post to advance X days")
     public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @PathVariable int days) {
-        if(days < 1){
+        if (days < 1) {
+            log.warn("Invalid advanceTime request: days={} must be >= 1", days);
             return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
         }
         TimeAdvancedResult result = advanceTimeUseCase.advanceTime(new AdvanceTimeCommand(days));

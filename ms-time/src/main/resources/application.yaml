@@ -35,3 +35,9 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
   packages-to-scan: com.gft.mstime.infraestructure.web
+
+logging:
+  level:
+    root: INFO
+    com.gft.mstime.application: INFO
+    com.gft.mstime.infraestructure: DEBUG

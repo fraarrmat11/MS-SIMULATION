@@ -7,10 +7,12 @@ import com.gft.mstime.application.result.TimeAdvancedResult;
 import com.gft.mstime.application.service.AdvanceTimeService;
 import com.gft.mstime.domain.SimulationClock;
 import com.gft.mstime.domain.TimeAdvancedEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class AdvanceTimeServiceImpl implements AdvanceTimeService {
 
@@ -35,12 +37,19 @@ public class AdvanceTimeServiceImpl implements AdvanceTimeService {
     public TimeAdvancedResult advanceTime(AdvanceTimeCommand command) {
         Objects.requireNonNull(command, "command cannot be null");
 
+        log.info("Advancing simulation time by {} day(s)", command.days());
+
         SimulationClock simulationClock = simulationClockRepository.load();
 
         TimeAdvancedEvent event = simulationClock.advanceDay(command.days());
 
         simulationClockRepository.save(simulationClock);
         timeAdvancedEventPublisher.publish(event);
+
+        log.info("Simulation time advanced: previousDay={}, currentDay={}, eventId={}",
+                event.previousDay().dayNumber(),
+                event.currentDay().dayNumber(),
+                event.eventId());
 
         return TimeAdvancedResult.from(event);
     }
