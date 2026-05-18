@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -36,6 +37,12 @@ public class MapGlobalExceptionHandler {
     public ProblemDetail handleInvalidLocation(InvalidLocationException ex) {
         log.warn("Invalid location submitted: {}", ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ProblemDetail handleNoResourceFound(NoResourceFoundException ex) {
+        log.debug("Static resource not found: {}", ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
