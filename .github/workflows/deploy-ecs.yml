@@ -2,6 +2,11 @@ name: Deploy to Amazon ECS
 
 on:
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag to deploy, usually the commit SHA produced by Build and Push Docker Images"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -9,29 +14,12 @@ permissions:
 
 jobs:
   deploy:
-    name: Build images and deploy ECS services
+    name: Deploy ECS services
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          distribution: "temurin"
-
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Run tests
-        run: ./mvnw clean verify
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -43,29 +31,20 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push ms-time image
-        id: build-ms-time
+      - name: Resolve image URIs
+        id: images
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_MS_TIME }}
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REPOSITORY_MS_TIME: ${{ vars.ECR_REPOSITORY_MS_TIME }}
+          ECR_REPOSITORY_MS_MAP: ${{ vars.ECR_REPOSITORY_MS_MAP }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
-          IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build -t "$IMAGE_URI" ./ms-time
-          docker push "$IMAGE_URI"
-          echo "image=$IMAGE_URI" >> "$GITHUB_OUTPUT"
-
-      - name: Build and push ms-map image
-        id: build-ms-map
-        env:
-          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_MS_MAP }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build -t "$IMAGE_URI" ./ms-map
-          docker push "$IMAGE_URI"
-          echo "image=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+          MS_TIME_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY_MS_TIME:$IMAGE_TAG"
+          MS_MAP_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY_MS_MAP:$IMAGE_TAG"
+          echo "ms-time-image=$MS_TIME_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "ms-map-image=$MS_MAP_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "Deploying ms-time image: $MS_TIME_IMAGE"
+          echo "Deploying ms-map image: $MS_MAP_IMAGE"
 
       - name: Render ms-time task definition
         id: render-ms-time
@@ -73,7 +52,7 @@ jobs:
         with:
           task-definition: ${{ vars.ECS_TASK_DEFINITION_MS_TIME }}
           container-name: ms-time
-          image: ${{ steps.build-ms-time.outputs.image }}
+          image: ${{ steps.images.outputs.ms-time-image }}
 
       - name: Deploy ms-time service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -89,7 +68,7 @@ jobs:
         with:
           task-definition: ${{ vars.ECS_TASK_DEFINITION_MS_MAP }}
           container-name: ms-map
-          image: ${{ steps.build-ms-map.outputs.image }}
+          image: ${{ steps.images.outputs.ms-map-image }}
 
       - name: Deploy ms-map service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
