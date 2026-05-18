@@ -10,10 +10,12 @@ public class MapRabbitMQConfig {
     public static final String TRUCK_REGISTERED_ROUTING_KEY = "truck.registered.v1";
     public static final String TRUCK_POSITION_UPDATED_ROUTING_KEY = "truck.position.updated.v1";
     public static final String WAREHOUSE_REGISTERED_ROUTING_KEY = "warehouse.registered.v1";
+    public static final String TRUCK_DELETED_ROUTING_KEY = "truck.deleted.v1";
 
     public static final String TRUCK_REGISTERED_QUEUE = "ms-map.truck-registered.q";
     public static final String TRUCK_POSITION_UPDATED_QUEUE = "ms-map.truck-position-updated.q";
     public static final String WAREHOUSE_REGISTERED_QUEUE = "ms-map.warehouse-registered.q";
+    public static final String TRUCK_DELETED_QUEUE = "ms-map.truck-deleted.q";
 
     @Bean
     public TopicExchange trucksExchange() {
@@ -36,6 +38,11 @@ public class MapRabbitMQConfig {
     }
 
     @Bean
+    public Queue truckDeletedQueue(){
+        return QueueBuilder.durable(TRUCK_DELETED_QUEUE).build();
+    }
+
+    @Bean
     public Binding truckRegisteredBinding() {
         return BindingBuilder.bind(truckRegisteredQueue())
                 .to(trucksExchange())
@@ -54,5 +61,12 @@ public class MapRabbitMQConfig {
         return BindingBuilder.bind(warehouseRegisteredQueue())
                 .to(trucksExchange())
                 .with(WAREHOUSE_REGISTERED_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding truckDeletedBinding() {
+        return BindingBuilder.bind(truckDeletedQueue())
+                .to(trucksExchange())
+                .with(TRUCK_DELETED_ROUTING_KEY);
     }
 }
