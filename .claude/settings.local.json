@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\mion\\\\IdeaProjects\\\\MS-SIMULATION\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "PowerShell(Get-Command *)",
+      "Bash(git rebase *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(git filter-branch *)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\mion\\\\IdeaProjects\\\\MS-SIMULATION\\\\src\\\\main\\\\resources\\\\db\\\\changelog\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\mion\\\\IdeaProjects\\\\MS-SIMULATION\\\\src\\\\test\\\\resources\")",
+      "PowerShell(New-Item *)"
+    ]
+  }
+}
