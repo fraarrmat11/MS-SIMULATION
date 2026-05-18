@@ -42,4 +42,13 @@ class TruckPositionJpaAdapterTest {
 
         verify(repo).save(any());
     }
+
+    @Test
+    void shouldDeleteByTruckId() {
+        UUID truckId = UUID.randomUUID();
+
+        adapter.delete(truckId);
+
+        verify(repo).deleteByTruckId(truckId);
+    }
 }
