@@ -49,6 +49,6 @@ class TruckPositionJpaAdapterTest {
 
         adapter.delete(truckId);
 
-        verify(repo).deleteByTruckId(truckId);
+        verify(repo).deleteById(truckId);
     }
 }
