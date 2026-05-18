@@ -90,4 +90,41 @@ public class MapStateTests {
         assertThat(mapState.getWarehouses())
                 .hasSize(initialSize + 1);
     }
+
+    @Test
+    void deleteTruck_WhenGivenExistingTruckId_ShouldRemoveTruck() {
+        UUID truckId = UUID.randomUUID();
+        mapState.registerTruck(truckId, new Location(1, 1));
+        int sizeAfterRegister = mapState.getTrucks().size();
+
+        mapState.deleteTruck(truckId);
+
+        assertThat(mapState.getTrucks())
+                .hasSize(sizeAfterRegister - 1)
+                .extracting("truckId")
+                .doesNotContain(truckId);
+    }
+
+    @Test
+    void deleteTruck_WhenGivenNonExistingTruckId_ShouldThrow() {
+        assertThatThrownBy(() -> mapState.deleteTruck(UUID.randomUUID()))
+                .isInstanceOf(TruckNotFoundException.class);
+    }
+
+    @Test
+    void deleteTruck_WhenMultipleTrucksExist_ShouldOnlyDeleteTargetTruck() {
+        UUID truckToDelete = UUID.randomUUID();
+        UUID otherTruck = UUID.randomUUID();
+        mapState.registerTruck(truckToDelete, new Location(1, 1));
+        mapState.registerTruck(otherTruck, new Location(2, 2));
+
+        mapState.deleteTruck(truckToDelete);
+
+        assertThat(mapState.getTrucks())
+                .extracting("truckId")
+                .doesNotContain(truckToDelete)
+                .contains(otherTruck);
+    }
+
+
 }

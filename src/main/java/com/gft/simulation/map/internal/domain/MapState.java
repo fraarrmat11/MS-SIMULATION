@@ -63,4 +63,9 @@ public class MapState {
         mapState.warehouses.addAll(warehouses);
         return mapState;
     }
+
+    public void deleteTruck(UUID truckId){
+        TruckPosition truckToDelete = findTruckOrThrow(truckId);
+        this.trucks.remove(truckToDelete);
+    }
 }
