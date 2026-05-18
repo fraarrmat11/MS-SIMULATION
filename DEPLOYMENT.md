@@ -87,19 +87,47 @@ Do not commit real database credentials, RabbitMQ credentials, AWS credentials, 
 
 ## GitHub Actions
 
-GitHub Actions should initially run manually with `workflow_dispatch` while AWS is being prepared.
-After the AWS setup is complete, the workflow may be extended to trigger on push to `main`.
+GitHub Actions runs manually with `workflow_dispatch`.
 
-The deployment workflow should:
+The CI/CD flow is split into two workflows:
 
-1. Run manually during the first setup phase.
-2. Set up Java 21.
-3. Run the Maven test suite.
-4. Build Docker images for `ms-time` and `ms-map`.
-5. Authenticate to AWS through GitHub OIDC.
-6. Push both images to ECR.
-7. Render or update ECS task definitions with the new image tags.
-8. Deploy both ECS services.
+1. `Build and Push Docker Images`.
+2. `Deploy to Amazon ECS`.
+
+This keeps image publication separate from runtime deployment. A commit can be built and pushed to ECR without immediately changing the running ECS services.
+
+### Build And Push Docker Images
+
+The build workflow should:
+
+1. Set up Java 21.
+2. Run the Maven test suite.
+3. Authenticate to AWS through GitHub OIDC.
+4. Log in to Amazon ECR.
+5. Build Docker images for `ms-time` and `ms-map`.
+6. Push both images to ECR using the commit SHA as the Docker tag.
+7. Print the `image_tag` that must be used by the deploy workflow.
+
+Example image tags:
+
+```text
+822414985516.dkr.ecr.eu-west-1.amazonaws.com/ms-time-2026-atmy:<commit-sha>
+822414985516.dkr.ecr.eu-west-1.amazonaws.com/ms-map-2026-atmy:<commit-sha>
+```
+
+Do not use `latest` as the deployment contract. Tags should identify a specific build.
+
+### Deploy To Amazon ECS
+
+The deploy workflow should:
+
+1. Receive an explicit `image_tag` input.
+2. Authenticate to AWS through GitHub OIDC.
+3. Build the ECR image URIs for `ms-time` and `ms-map` using that tag.
+4. Render the ECS task definitions with those image URIs.
+5. Deploy both ECS services.
+
+The `image_tag` should normally be the commit SHA printed by `Build and Push Docker Images`.
 
 Prefer GitHub OIDC over long-lived `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` secrets.
 
