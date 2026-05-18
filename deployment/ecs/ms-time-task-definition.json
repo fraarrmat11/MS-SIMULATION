@@ -13,7 +13,7 @@
   "containerDefinitions": [
     {
       "name": "ms-time",
-      "image": "822414985516.dkr.ecr.eu-west-1.amazonaws.com/ms-time-2026-atmy:latest",
+      "image": "822414985516.dkr.ecr.eu-west-1.amazonaws.com/ms-time-2026-atmy:replace-me",
       "essential": true,
       "portMappings": [
         {
