@@ -39,6 +39,6 @@ public class TruckPositionJpaAdapter implements TruckPositionPort {
 
     @Override
     public void delete(UUID truckId) {
-        repository.deleteByTruckId(truckId);
+        repository.deleteById(truckId);
     }
 }
