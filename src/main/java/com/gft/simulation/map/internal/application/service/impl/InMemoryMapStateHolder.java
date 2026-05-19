@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class InMemoryMapStateHolder implements MapStateHolder {
 
-    private MapState mapState;
+    private volatile MapState mapState;
 
     @Override
     public MapState get() {
