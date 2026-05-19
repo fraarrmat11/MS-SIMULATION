@@ -29,6 +29,7 @@ public class TruckPositionJpaAdapter implements TruckPositionPort {
     }
 
     @Override
+    @Transactional
     public void save(TruckPosition truckPosition) {
         TruckPositionEntity entity = new TruckPositionEntity(
                 truckPosition.getTruckId(),
@@ -39,7 +40,6 @@ public class TruckPositionJpaAdapter implements TruckPositionPort {
     }
 
     @Override
-    @Transactional
     public void delete(UUID truckId) {
         repository.deleteById(truckId);
     }
