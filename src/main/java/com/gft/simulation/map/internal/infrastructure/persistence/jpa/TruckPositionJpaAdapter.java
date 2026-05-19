@@ -41,6 +41,6 @@ public class TruckPositionJpaAdapter implements TruckPositionPort {
     @Override
     @Transactional
     public void delete(UUID truckId) {
-        repository.deleteByTruckId(truckId);
+        repository.deleteById(truckId);
     }
 }
