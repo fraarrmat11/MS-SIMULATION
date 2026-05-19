@@ -120,16 +120,16 @@ class SimulationClockControllerIT {
     }
 
     @Test
-    @DisplayName("POST /tick/0 - días = 0 devuelve 416")
-    void advanceTime_zeroDays_returns416() throws Exception {
+    @DisplayName("POST /tick/0 - días = 0 devuelve 422")
+    void advanceTime_zeroDays_returns422() throws Exception {
         mockMvc.perform(post("/tick/0").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isRequestedRangeNotSatisfiable());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    @DisplayName("POST /tick/-1 - días negativos devuelve 416")
-    void advanceTime_negativeDays_returns416() throws Exception {
+    @DisplayName("POST /tick/-1 - días negativos devuelve 422")
+    void advanceTime_negativeDays_returns422() throws Exception {
         mockMvc.perform(post("/tick/-1").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isRequestedRangeNotSatisfiable());
+                .andExpect(status().isUnprocessableEntity());
     }
 }

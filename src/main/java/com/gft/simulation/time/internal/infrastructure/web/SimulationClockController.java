@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,11 +48,6 @@ public class SimulationClockController {
     @Operation(summary = "Post to advance X days")
     public ResponseEntity<TimeAdvancedResponse> advanceTime(@Valid @PathVariable int days) {
         log.info("HTTP POST /tick/{} received", days);
-
-        if (days < 1) {
-            log.warn("HTTP POST /tick/{} rejected: status=416, reason=days_must_be_greater_than_zero", days);
-            return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
-        }
 
         TimeAdvancedResult result = advanceTimeUseCase.advanceTime(new AdvanceTimeCommand(days));
         log.info(

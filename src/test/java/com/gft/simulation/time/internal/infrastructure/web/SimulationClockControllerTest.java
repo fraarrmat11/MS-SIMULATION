@@ -4,6 +4,7 @@ import com.gft.simulation.time.internal.application.command.AdvanceTimeCommand;
 import com.gft.simulation.time.internal.application.result.TimeAdvancedResult;
 import com.gft.simulation.time.internal.application.usecase.AdvanceTimeUseCase;
 import com.gft.simulation.time.internal.application.usecase.GetCurrentSimulationDayUseCase;
+import com.gft.simulation.time.internal.domain.exceptions.InvalidDaysToAdvanceException;
 import com.gft.simulation.time.internal.infrastructure.web.response.TimeAdvancedResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -65,11 +67,15 @@ class SimulationClockControllerTest {
     }
 
     @Test
-    void advanceTime_WhenDaysIsLessThanOne_ShouldReturnRequestedRangeNotSatisfiable() {
-        ResponseEntity<TimeAdvancedResponse> response = controller.advanceTime(0);
+    void advanceTime_WhenDaysIsLessThanOne_ShouldPropagateInvalidDaysToAdvanceException() {
+        doThrow(new InvalidDaysToAdvanceException(0))
+                .when(advanceTimeUseCase)
+                .advanceTime(new AdvanceTimeCommand(0));
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
-        assertThat(response.getBody()).isNull();
+        assertThatThrownBy(() -> controller.advanceTime(0))
+                .isInstanceOf(InvalidDaysToAdvanceException.class);
+
+        verify(advanceTimeUseCase).advanceTime(new AdvanceTimeCommand(0));
         verifyNoMoreInteractions(advanceTimeUseCase, getCurrentSimulationDayUseCase);
     }
 
