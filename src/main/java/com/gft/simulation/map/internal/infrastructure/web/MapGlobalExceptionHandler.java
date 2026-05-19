@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(assignableTypes = MapController.class)
 public class MapGlobalExceptionHandler {
 
     @ExceptionHandler(TruckNotFoundException.class)
