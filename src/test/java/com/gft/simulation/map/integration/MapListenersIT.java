@@ -5,6 +5,7 @@ import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.MapState;
 import com.gft.simulation.map.internal.domain.WarehouseType;
 import com.gft.simulation.map.internal.infrastructure.config.MapRabbitMQConfig;
+import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.TruckDeletedEvent;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.TruckPositionUpdatedEvent;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.TruckRegisteredEvent;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.WarehouseRegisteredEvent;
@@ -133,6 +134,44 @@ class MapListenersIT {
                         assertThat(e.getYEdge()).isEqualTo(77);
                     });
         });
+    }
+
+    @Test
+    @DisplayName("TruckDeleted - el camión se elimina de MapState y de BD")
+    void truckDeleted_removesFromMapStateAndPersistence() {
+
+        UUID truckId = UUID.randomUUID();
+
+        rabbitTemplate.convertAndSend(
+                "trucks.exchange",
+                MapRabbitMQConfig.TRUCK_REGISTERED_ROUTING_KEY,
+                new TruckRegisteredEvent(truckId, new Location(5,10))
+        );
+        await().atMost(Duration.ofSeconds(10)).untilAsserted(() ->
+            assertThat(mapStateHolder.get().getTrucks()).anyMatch(t -> t.getTruckId().equals(truckId))
+        );
+
+        rabbitTemplate.convertAndSend("trucks.exchange", MapRabbitMQConfig.TRUCK_DELETED_ROUTING_KEY, new TruckDeletedEvent(truckId));
+
+        await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+            assertThat(mapStateHolder.get().getTrucks())
+                    .noneMatch(t -> t.getTruckId().equals(truckId));
+            assertThat(truckRepo.findById(truckId)).isEmpty();
+        });
+
+    }
+
+    @Test
+    @DisplayName("TruckDeleted de camión inexistente - el listener no propaga excepción")
+    void truckDeleted_unknownTruck_doesNotThrow() {
+        UUID unknownId = UUID.randomUUID();
+
+        rabbitTemplate.convertAndSend("trucks.exchange", MapRabbitMQConfig.TRUCK_DELETED_ROUTING_KEY,
+                new TruckDeletedEvent(unknownId));
+
+        await().during(Duration.ofSeconds(2)).atMost(Duration.ofSeconds(4)).untilAsserted(() ->
+                assertThat(mapStateHolder.get().getTrucks()).isEmpty()
+        );
     }
 
     @Test
