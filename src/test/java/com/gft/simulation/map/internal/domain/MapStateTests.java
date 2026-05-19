@@ -48,7 +48,11 @@ public class MapStateTests {
         UUID truckId = UUID.randomUUID();
         mapState.registerTruck(truckId, new Location(1, 1));
         mapState.updateTruckPosition(truckId, new Location(2, 1));
-        assertThat(mapState.getTrucks().get(0).getLocation().getX()).isEqualTo(2);
+        assertThat(mapState.getTrucks())
+                .filteredOn(t -> t.getTruckId().equals(truckId))
+                .singleElement()
+                .extracting(t -> t.getLocation().getX())
+                .isEqualTo(2);
     }
 
     @Test
