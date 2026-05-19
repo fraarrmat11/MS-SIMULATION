@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       image_tag:
-        description: "Docker image tag to deploy, usually the commit SHA produced by Build and Push Docker Images"
+        description: "Docker image tag to deploy, usually the commit SHA produced by Build and Push Docker Image"
         required: true
         type: string
 
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy ECS services
+    name: Deploy ms-simulation ECS service
     runs-on: ubuntu-latest
 
     steps:
@@ -31,49 +31,29 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Resolve image URIs
-        id: images
+      - name: Resolve ms-simulation image URI
+        id: image
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY_MS_TIME: ${{ vars.ECR_REPOSITORY_MS_TIME }}
-          ECR_REPOSITORY_MS_MAP: ${{ vars.ECR_REPOSITORY_MS_MAP }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_MS_SIMULATION }}
           IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
-          MS_TIME_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY_MS_TIME:$IMAGE_TAG"
-          MS_MAP_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY_MS_MAP:$IMAGE_TAG"
-          echo "ms-time-image=$MS_TIME_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "ms-map-image=$MS_MAP_IMAGE" >> "$GITHUB_OUTPUT"
-          echo "Deploying ms-time image: $MS_TIME_IMAGE"
-          echo "Deploying ms-map image: $MS_MAP_IMAGE"
+          IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+          echo "Deploying ms-simulation image: $IMAGE_URI"
 
-      - name: Render ms-time task definition
-        id: render-ms-time
+      - name: Render ms-simulation task definition
+        id: render-ms-simulation
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ vars.ECS_TASK_DEFINITION_MS_TIME }}
-          container-name: ms-time
-          image: ${{ steps.images.outputs.ms-time-image }}
+          task-definition: ${{ vars.ECS_TASK_DEFINITION_MS_SIMULATION }}
+          container-name: ms-simulation
+          image: ${{ steps.image.outputs.uri }}
 
-      - name: Deploy ms-time service
+      - name: Deploy ms-simulation service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ steps.render-ms-time.outputs.task-definition }}
-          service: ${{ vars.ECS_SERVICE_MS_TIME }}
-          cluster: ${{ vars.ECS_CLUSTER }}
-          wait-for-service-stability: true
-
-      - name: Render ms-map task definition
-        id: render-ms-map
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ vars.ECS_TASK_DEFINITION_MS_MAP }}
-          container-name: ms-map
-          image: ${{ steps.images.outputs.ms-map-image }}
-
-      - name: Deploy ms-map service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.render-ms-map.outputs.task-definition }}
-          service: ${{ vars.ECS_SERVICE_MS_MAP }}
+          task-definition: ${{ steps.render-ms-simulation.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE_MS_SIMULATION }}
           cluster: ${{ vars.ECS_CLUSTER }}
           wait-for-service-stability: true
