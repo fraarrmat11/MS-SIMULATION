@@ -22,8 +22,8 @@ public class RegisterTruckUseCase {
     @Transactional
     public void execute(UUID truckId, Location location) {
         log.info("Registering truck: truckId={}", truckId);
-        truckPositionPort.save(new TruckPosition(truckId, location));
         holder.get().registerTruck(truckId, location);
+        truckPositionPort.save(new TruckPosition(truckId, location));
         log.info("Truck registered successfully: truckId={}", truckId);
     }
 }

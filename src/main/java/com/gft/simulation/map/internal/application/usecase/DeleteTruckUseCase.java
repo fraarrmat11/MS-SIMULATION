@@ -20,8 +20,8 @@ public class DeleteTruckUseCase {
     @Transactional
     public void execute(UUID truckId){
         log.info("Deleting truck: truckId={}", truckId);
-        port.delete(truckId);
         holder.get().deleteTruck(truckId);
+        port.delete(truckId);
         log.info("Truck deleted successfully: truckId={}", truckId);
     }
 }

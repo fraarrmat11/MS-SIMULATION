@@ -22,8 +22,8 @@ public class UpdateTruckPositionUseCase {
     @Transactional
     public void execute(UUID truckId, Location location) {
         log.info("Updating truck position: truckId={}", truckId);
-        truckPositionPort.save(new TruckPosition(truckId, location));
         holder.get().updateTruckPosition(truckId, location);
+        truckPositionPort.save(new TruckPosition(truckId, location));
         log.info("Truck position updated successfully: truckId={}", truckId);
     }
 }
