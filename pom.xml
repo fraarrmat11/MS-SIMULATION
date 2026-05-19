@@ -20,8 +20,22 @@
         <java.version>21</java.version>
         <jacoco.version>0.8.13</jacoco.version>
         <spring-modulith.version>1.3.4</spring-modulith.version>
-        <docker.host>npipe:////./pipe/docker_engine</docker.host>
+        <docker.host></docker.host>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>windows-docker</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <docker.host>npipe:////./pipe/docker_engine</docker.host>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>

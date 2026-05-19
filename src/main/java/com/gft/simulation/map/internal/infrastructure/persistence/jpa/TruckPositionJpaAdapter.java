@@ -4,6 +4,7 @@ import com.gft.simulation.map.internal.application.port.out.TruckPositionPort;
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.TruckPosition;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,7 @@ public class TruckPositionJpaAdapter implements TruckPositionPort {
     }
 
     @Override
+    @Transactional
     public void delete(UUID truckId) {
         repository.deleteByTruckId(truckId);
     }
