@@ -4,6 +4,7 @@ import com.gft.simulation.map.internal.application.port.out.WarehousePositionPor
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.WarehousePosition;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class WarehousePositionJpaAdapter implements WarehousePositionPort {
     }
 
     @Override
+    @Transactional
     public void save(WarehousePosition warehousePosition) {
         WarehousePositionEntity entity = new WarehousePositionEntity();
         entity.setWarehouseId(warehousePosition.getWarehouseId());

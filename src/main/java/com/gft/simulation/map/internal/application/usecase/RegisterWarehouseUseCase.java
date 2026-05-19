@@ -8,6 +8,7 @@ import com.gft.simulation.map.internal.domain.WarehouseType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class RegisterWarehouseUseCase {
     private final MapStateHolder holder;
     private final WarehousePositionPort warehousePositionPort;
 
+    @Transactional
     public void execute(UUID warehouseId, String name, Location location, WarehouseType warehouseType) {
         log.info("Registering warehouse: warehouseId={}, type={}", warehouseId, warehouseType);
         holder.get().registerWarehouse(warehouseId, name, location, warehouseType);

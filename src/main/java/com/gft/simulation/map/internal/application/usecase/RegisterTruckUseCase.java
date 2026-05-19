@@ -7,6 +7,7 @@ import com.gft.simulation.map.internal.domain.TruckPosition;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ public class RegisterTruckUseCase {
     private final MapStateHolder holder;
     private final TruckPositionPort truckPositionPort;
 
+    @Transactional
     public void execute(UUID truckId, Location location) {
         log.info("Registering truck: truckId={}", truckId);
         holder.get().registerTruck(truckId, location);
