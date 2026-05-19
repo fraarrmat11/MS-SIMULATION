@@ -24,7 +24,7 @@ public final class TimeAdvancedEvent {
         this.eventId = Objects.requireNonNull(eventId, "eventId cannot be null");
         this.previousDay = previousDay;
         this.currentDay = currentDay;
-        this.occurredAt = Objects.requireNonNull(occurredAt, "ocurredAt cannot be null");
+        this.occurredAt = Objects.requireNonNull(occurredAt, "occurredAt cannot be null");
     }
 
     public static TimeAdvancedEvent of(SimulationDay previousDay, SimulationDay currentDay) {

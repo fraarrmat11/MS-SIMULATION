@@ -22,8 +22,8 @@ public class TruckDeletedListener {
         try{
             deleteTruckUseCase.execute(event.getTruckId());
             log.debug("TruckDeleted processed successfully: truckId={}", event.getTruckId());
-        }catch (TruckNotFoundException e){
-            System.out.println(e.getMessage());
+        } catch (TruckNotFoundException e) {
+            log.warn("Truck not found, ignoring: truckId={}", event.getTruckId());
         }
     }
 }
