@@ -1,0 +1,84 @@
+{
+  "family": "ms-simulation-2026-atmy",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::822414985516:role/ecsTaskExecutionRole-2026-atmy",
+  "taskRoleArn": "arn:aws:iam::822414985516:role/ms-simulation-task-role-2026-atmy",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "containerDefinitions": [
+    {
+      "name": "ms-simulation",
+      "image": "822414985516.dkr.ecr.eu-west-1.amazonaws.com/ms-simulation-2026-atmy:replace-me",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "prod"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "RABBITMQ_PORT",
+          "value": "5671"
+        },
+        {
+          "name": "RABBITMQ_SSL_ENABLED",
+          "value": "true"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "SPRING_DATASOURCE_URL",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/db/url"
+        },
+        {
+          "name": "SPRING_DATASOURCE_USERNAME",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/db/username"
+        },
+        {
+          "name": "SPRING_DATASOURCE_PASSWORD",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/db/password"
+        },
+        {
+          "name": "RABBITMQ_HOST",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/rabbitmq/host"
+        },
+        {
+          "name": "RABBITMQ_USERNAME",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/rabbitmq/username"
+        },
+        {
+          "name": "RABBITMQ_PASSWORD",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/rabbitmq/password"
+        },
+        {
+          "name": "RABBITMQ_VHOST",
+          "valueFrom": "arn:aws:ssm:eu-west-1:822414985516:parameter/ms-simulation/prod/rabbitmq/vhost"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ms-simulation-2026-atmy",
+          "awslogs-region": "eu-west-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

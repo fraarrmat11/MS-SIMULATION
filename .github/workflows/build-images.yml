@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: Build and Push Docker Image
 
 on:
   workflow_dispatch:
@@ -8,8 +8,8 @@ permissions:
   id-token: write
 
 jobs:
-  build-images:
-    name: Build and push images to Amazon ECR
+  build-image:
+    name: Build and push ms-simulation image to Amazon ECR
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run tests
+      - name: Run tests and build JAR
         run: ./mvnw clean verify
 
       - name: Configure AWS credentials
@@ -43,27 +43,19 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push ms-time image
+      - name: Build and push ms-simulation image
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_MS_TIME }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_MS_SIMULATION }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build -t "$IMAGE_URI" ./ms-time
+          docker build \
+            --build-arg JAR_FILE=target/ms-simulation-0.0.1-SNAPSHOT.jar \
+            -t "$IMAGE_URI" \
+            .
           docker push "$IMAGE_URI"
-          echo "ms-time image pushed: $IMAGE_URI"
-
-      - name: Build and push ms-map image
-        env:
-          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY_MS_MAP }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build -t "$IMAGE_URI" ./ms-map
-          docker push "$IMAGE_URI"
-          echo "ms-map image pushed: $IMAGE_URI"
+          echo "ms-simulation image pushed: $IMAGE_URI"
 
       - name: Deployment image tag
         run: |
