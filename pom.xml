@@ -21,6 +21,7 @@
         <jacoco.version>0.8.13</jacoco.version>
         <spring-modulith.version>1.3.4</spring-modulith.version>
         <docker.host>npipe:////./pipe/docker_engine</docker.host>
+        <argLine></argLine>
     </properties>
 
     <dependencyManagement>
@@ -202,6 +203,7 @@
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
+                    <argLine>@{argLine}</argLine>
                     <systemPropertyVariables>
                         <docker.host>${docker.host}</docker.host>
                     </systemPropertyVariables>
