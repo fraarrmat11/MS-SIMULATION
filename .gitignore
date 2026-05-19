@@ -31,6 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Claude Code ###
+.claude/settings.local.json
 /readme's/AdvanceTimeCommand.md
 /src/test/java/com/gft/mssimulation/application/simulationclock/command/AdvanceTimeCommandTest.md
 /readme's/AdvanceTimeRequest.md
