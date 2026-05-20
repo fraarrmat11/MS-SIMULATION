@@ -2,7 +2,6 @@ package com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.listen
 
 import com.gft.simulation.map.internal.application.usecase.RegisterWarehouseUseCase;
 import com.gft.simulation.map.internal.domain.Location;
-import com.gft.simulation.map.internal.domain.WarehouseType;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.WarehouseRegisteredEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,7 @@ class WarehouseRegisteredListenerTest {
 
     @Test
     void shouldDelegateEventToUseCase() {
-        WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(UUID.randomUUID(), "test", new Location(1, 1), WarehouseType.FACTORY);
+        WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(UUID.randomUUID(), "test", new Location(1, 1), "FACTORY");
 
         listener.onEvent(event);
 

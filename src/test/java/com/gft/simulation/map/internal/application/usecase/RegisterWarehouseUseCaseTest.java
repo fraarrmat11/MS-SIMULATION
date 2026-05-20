@@ -5,7 +5,6 @@ import com.gft.simulation.map.internal.application.service.MapStateHolder;
 import com.gft.simulation.map.internal.application.service.impl.InMemoryMapStateHolder;
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.MapState;
-import com.gft.simulation.map.internal.domain.WarehouseType;
 import com.gft.simulation.map.internal.domain.exceptions.InvalidLocationException;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +28,7 @@ public class RegisterWarehouseUseCaseTest {
 
         RegisterWarehouseUseCase useCase = new RegisterWarehouseUseCase(holder, repository);
 
-        useCase.execute(warehouseId, "warehouseTest", new Location(1, 1), WarehouseType.FACTORY);
+        useCase.execute(warehouseId, "warehouseTest", new Location(1, 1), "FACTORY");
 
         assertThat(mapState.getWarehouses())
                 .hasSize(initialSize + 1)
@@ -51,7 +50,7 @@ public class RegisterWarehouseUseCaseTest {
         RegisterWarehouseUseCase useCase = new RegisterWarehouseUseCase(holder, repository);
 
         assertThatThrownBy(() -> useCase
-                .execute(warehouseId, "warehouseTest", new Location(-1, -1), WarehouseType.FACTORY))
+                .execute(warehouseId, "warehouseTest", new Location(-1, -1), "FACTORY"))
                 .isInstanceOf(InvalidLocationException.class);
 
         verify(repository, never()).save(any());

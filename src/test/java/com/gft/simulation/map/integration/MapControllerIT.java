@@ -3,7 +3,6 @@ package com.gft.simulation.map.integration;
 import com.gft.simulation.map.internal.application.service.MapStateHolder;
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.MapState;
-import com.gft.simulation.map.internal.domain.WarehouseType;
 import com.gft.simulation.map.internal.infrastructure.persistence.jpa.TruckPositionJpaRepository;
 import com.gft.simulation.map.internal.infrastructure.persistence.jpa.WarehousePositionJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +66,7 @@ class MapControllerIT {
 
         MapState state = new MapState();
         state.registerTruck(TRUCK_ID, new Location(10, 20));
-        state.registerWarehouse(WAREHOUSE_ID, "Almacén Test", new Location(50, 60), WarehouseType.PRODUCTION);
+        state.registerWarehouse(WAREHOUSE_ID, "Almacén Test", new Location(50, 60), "PRODUCTION");
         mapStateHolder.set(state);
     }
 

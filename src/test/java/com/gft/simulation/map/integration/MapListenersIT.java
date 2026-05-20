@@ -3,7 +3,6 @@ package com.gft.simulation.map.integration;
 import com.gft.simulation.map.internal.application.service.MapStateHolder;
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.MapState;
-import com.gft.simulation.map.internal.domain.WarehouseType;
 import com.gft.simulation.map.internal.infrastructure.config.MapRabbitMQConfig;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.TruckDeletedEvent;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.TruckPositionUpdatedEvent;
@@ -179,7 +178,7 @@ class MapListenersIT {
     void warehouseRegistered_updatesMapStateAndPersists() {
         UUID warehouseId = UUID.randomUUID();
         WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(
-                warehouseId, "Almacén Central", new Location(30, 40), WarehouseType.FACTORY);
+                warehouseId, "Almacén Central", new Location(30, 40), "FACTORY");
 
         rabbitTemplate.convertAndSend("trucks.exchange", MapRabbitMQConfig.WAREHOUSE_REGISTERED_ROUTING_KEY, event);
 
@@ -187,14 +186,14 @@ class MapListenersIT {
             assertThat(mapStateHolder.get().getWarehouses())
                     .anyMatch(w -> w.getWarehouseId().equals(warehouseId)
                             && w.getName().equals("Almacén Central")
-                            && w.getType() == WarehouseType.FACTORY
+                            && "FACTORY".equals(w.getType())
                             && w.getLocation().getX() == 30
                             && w.getLocation().getY() == 40);
             assertThat(warehouseRepo.findById(warehouseId))
                     .isPresent()
                     .hasValueSatisfying(e -> {
                         assertThat(e.getName()).isEqualTo("Almacén Central");
-                        assertThat(e.getWarehouseType()).isEqualTo(WarehouseType.FACTORY);
+                        assertThat(e.getWarehouseType()).isEqualTo("FACTORY");
                         assertThat(e.getXEdge()).isEqualTo(30);
                         assertThat(e.getYEdge()).isEqualTo(40);
                     });
@@ -206,14 +205,14 @@ class MapListenersIT {
     void warehouseRegistered_clientType_persistsCorrectly() {
         UUID warehouseId = UUID.randomUUID();
         WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(
-                warehouseId, "Cliente Norte", new Location(1, 2), WarehouseType.CLIENT);
+                warehouseId, "Cliente Norte", new Location(1, 2), "CLIENT");
 
         rabbitTemplate.convertAndSend("trucks.exchange", MapRabbitMQConfig.WAREHOUSE_REGISTERED_ROUTING_KEY, event);
 
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() ->
                 assertThat(warehouseRepo.findById(warehouseId))
                         .isPresent()
-                        .hasValueSatisfying(e -> assertThat(e.getWarehouseType()).isEqualTo(WarehouseType.CLIENT))
+                        .hasValueSatisfying(e -> assertThat(e.getWarehouseType()).isEqualTo("CLIENT"))
         );
     }
 }

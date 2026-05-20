@@ -75,7 +75,7 @@ public class MapStateTests {
     void registerWarehouse_WhenGivenCorrectArguments_ShouldWork() {
         UUID warehouseId = UUID.randomUUID();
         int initialSize = mapState.getWarehouses().size();
-        mapState.registerWarehouse(warehouseId, "testWarehouse", new Location(1, 1), WarehouseType.FACTORY);
+        mapState.registerWarehouse(warehouseId, "testWarehouse", new Location(1, 1), "FACTORY");
         assertThat(mapState.getWarehouses())
                 .hasSize(initialSize + 1)
                 .extracting("warehouseId")
@@ -86,9 +86,9 @@ public class MapStateTests {
     void registerWarehouse_WhenGivenExistingWarehouse_ShouldThrow() {
         UUID warehouseId = UUID.randomUUID();
         int initialSize = mapState.getWarehouses().size();
-        mapState.registerWarehouse(warehouseId, "Warehouse 1", new Location(1, 1), WarehouseType.FACTORY);
+        mapState.registerWarehouse(warehouseId, "Warehouse 1", new Location(1, 1), "FACTORY");
 
-        assertThatThrownBy(() -> mapState.registerWarehouse(warehouseId, "Warehouse 1", new Location(1, 1), WarehouseType.FACTORY))
+        assertThatThrownBy(() -> mapState.registerWarehouse(warehouseId, "Warehouse 1", new Location(1, 1), "FACTORY"))
                 .isInstanceOf(WarehouseAlreadyRegisteredException.class);
 
         assertThat(mapState.getWarehouses())
