@@ -181,7 +181,7 @@ class MapListenersIT {
         WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(
                 warehouseId, "Almacén Central", new Location(30, 40), WarehouseType.FACTORY);
 
-        rabbitTemplate.convertAndSend("trucks.exchange", MapRabbitMQConfig.WAREHOUSE_REGISTERED_ROUTING_KEY, event);
+        rabbitTemplate.convertAndSend("warehouses.exchange", MapRabbitMQConfig.WAREHOUSE_REGISTERED_ROUTING_KEY, event);
 
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
             assertThat(mapStateHolder.get().getWarehouses())
@@ -208,7 +208,7 @@ class MapListenersIT {
         WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(
                 warehouseId, "Cliente Norte", new Location(1, 2), WarehouseType.CLIENT);
 
-        rabbitTemplate.convertAndSend("trucks.exchange", MapRabbitMQConfig.WAREHOUSE_REGISTERED_ROUTING_KEY, event);
+        rabbitTemplate.convertAndSend("warehouses.exchange", MapRabbitMQConfig.WAREHOUSE_REGISTERED_ROUTING_KEY, event);
 
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() ->
                 assertThat(warehouseRepo.findById(warehouseId))
