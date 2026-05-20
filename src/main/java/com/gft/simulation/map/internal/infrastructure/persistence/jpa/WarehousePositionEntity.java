@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class WarehousePositionEntity {
     @Id
-    private UUID warehouseId;
+    private String warehouseId;
 
     private String name;
 
@@ -25,7 +25,6 @@ public class WarehousePositionEntity {
     @Column(name = "y_edge")
     private int yEdge;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "warehouse_type")
-    private WarehouseType warehouseType;
+    private String warehouseType;
 }

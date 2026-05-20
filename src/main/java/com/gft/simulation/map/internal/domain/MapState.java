@@ -28,7 +28,7 @@ public class MapState {
         existingTruckPosition.updateLocation(location);
     }
 
-    public void registerWarehouse(UUID warehouseId, String name, Location location, WarehouseType warehouseType) {
+    public void registerWarehouse(String warehouseId, String name, Location location, String warehouseType) {
         if (isWarehouseAlreadyRegistered(warehouseId))
             throw new WarehouseAlreadyRegisteredException(warehouseId);
         warehouses.add(new WarehousePosition(warehouseId, name, location, warehouseType));
@@ -46,7 +46,7 @@ public class MapState {
         return trucks.stream().anyMatch(t -> t.getTruckId().equals(truckId));
     }
 
-    private boolean isWarehouseAlreadyRegistered(UUID warehouseId) {
+    private boolean isWarehouseAlreadyRegistered(String warehouseId) {
         return warehouses.stream().anyMatch(w -> w.getWarehouseId().equals(warehouseId));
     }
 

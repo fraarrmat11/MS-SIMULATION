@@ -12,8 +12,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class WarehouseRegisteredEvent {
-    private UUID warehouseId;
+    private String warehouseId;
     private String name;
     private Location location;
-    private WarehouseType warehouseType;
+    private String warehouseType;
 }

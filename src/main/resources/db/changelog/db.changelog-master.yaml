@@ -89,3 +89,12 @@ databaseChangeLog:
               - column:
                   name: warehouse_type
                   type: varchar(255)
+
+  - changeSet:
+      id: 004-alter-warehouse-id-to-varchar
+      author: codex
+      changes:
+        - modifyDataType:
+            tableName: warehouse_position
+            columnName: warehouse_id
+            newDataType: varchar(255)

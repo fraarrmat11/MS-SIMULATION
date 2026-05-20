@@ -21,7 +21,7 @@ public class RegisterWarehouseUseCase {
     private final WarehousePositionPort warehousePositionPort;
 
     @Transactional
-    public void execute(UUID warehouseId, String name, Location location, WarehouseType warehouseType) {
+    public void execute(String warehouseId, String name, Location location, String warehouseType) {
         log.info("Registering warehouse: warehouseId={}, type={}", warehouseId, warehouseType);
         holder.get().registerWarehouse(warehouseId, name, location, warehouseType);
         warehousePositionPort.save(new WarehousePosition(warehouseId, name, location, warehouseType));

@@ -51,7 +51,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleWarehouseAlreadyRegistered_ShouldReturn409() throws Exception {
-        when(service.getMapState()).thenThrow(new WarehouseAlreadyRegisteredException(UUID.randomUUID()));
+        when(service.getMapState()).thenThrow(new WarehouseAlreadyRegisteredException("id-warehouse"));
 
         mockMvc.perform(get("/map")).andExpect(status().isConflict());
     }
