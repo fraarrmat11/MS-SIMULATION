@@ -23,6 +23,11 @@ public class MapRabbitMQConfig {
     }
 
     @Bean
+    public TopicExchange warehousesExchange() {
+        return new TopicExchange("warehouses.exchange");
+    }
+
+    @Bean
     public Queue truckRegisteredQueue() {
         return QueueBuilder.durable(TRUCK_REGISTERED_QUEUE).build();
     }
@@ -59,7 +64,7 @@ public class MapRabbitMQConfig {
     @Bean
     public Binding warehouseRegisteredBinding() {
         return BindingBuilder.bind(warehouseRegisteredQueue())
-                .to(trucksExchange())
+                .to(warehousesExchange())
                 .with(WAREHOUSE_REGISTERED_ROUTING_KEY);
     }
 
