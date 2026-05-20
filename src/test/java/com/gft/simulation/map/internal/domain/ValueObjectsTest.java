@@ -52,16 +52,9 @@ class ValueObjectsTest {
                 warehouseId,
                 "Factory 1",
                 location,
-                WarehouseType.FACTORY
+                "FACTORY"
         );
 
         assertThat(warehousePosition.getWarehouseId()).isEqualTo(warehouseId);
-    }
-
-    @Test
-    void exposesWarehouseTypes() {
-        assertThat(WarehouseType.values())
-                .containsExactly(WarehouseType.FACTORY, WarehouseType.PRODUCTION, WarehouseType.CLIENT);
-        assertThat(WarehouseType.valueOf("FACTORY")).isEqualTo(WarehouseType.FACTORY);
     }
 }

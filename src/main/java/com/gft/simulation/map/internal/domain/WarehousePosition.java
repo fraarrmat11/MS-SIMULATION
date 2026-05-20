@@ -15,5 +15,5 @@ public class WarehousePosition {
     private UUID warehouseId;
     private String name;
     private Location location;
-    private WarehouseType type;
+    private String type;
 }

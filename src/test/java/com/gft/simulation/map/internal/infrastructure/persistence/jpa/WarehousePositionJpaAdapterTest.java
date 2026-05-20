@@ -2,7 +2,6 @@ package com.gft.simulation.map.internal.infrastructure.persistence.jpa;
 
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.WarehousePosition;
-import com.gft.simulation.map.internal.domain.WarehouseType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,7 +23,7 @@ class WarehousePositionJpaAdapterTest {
         entity.setName("w1");
         entity.setXEdge(1);
         entity.setYEdge(2);
-        entity.setWarehouseType(WarehouseType.FACTORY);
+        entity.setWarehouseType("FACTORY");
 
         when(repo.findAll()).thenReturn(List.of(entity));
 
@@ -40,7 +39,7 @@ class WarehousePositionJpaAdapterTest {
                 UUID.randomUUID(),
                 "w1",
                 new Location(1, 1),
-                WarehouseType.FACTORY
+                "FACTORY"
         );
 
         adapter.save(domain);
