@@ -19,12 +19,16 @@ public class MapRabbitMQConfig {
 
     @Bean
     public TopicExchange trucksExchange() {
-        return new TopicExchange("trucks.exchange");
+        TopicExchange exchange = new TopicExchange("trucks.exchange");
+        exchange.setShouldDeclare(false);
+        return exchange;
     }
 
     @Bean
     public TopicExchange warehousesExchange() {
-        return new TopicExchange("warehouses.exchange");
+        TopicExchange exchange = new TopicExchange("warehouses.exchange");
+        exchange.setShouldDeclare(false);
+        return exchange;
     }
 
     @Bean
