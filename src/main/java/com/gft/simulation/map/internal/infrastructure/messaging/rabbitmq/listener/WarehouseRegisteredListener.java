@@ -1,6 +1,7 @@
 package com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.listener;
 
 import com.gft.simulation.map.internal.application.usecase.RegisterWarehouseUseCase;
+import com.gft.simulation.map.internal.domain.exceptions.WarehouseAlreadyRegisteredException;
 import com.gft.simulation.map.internal.infrastructure.config.MapRabbitMQConfig;
 import com.gft.simulation.map.internal.infrastructure.messaging.rabbitmq.WarehouseRegisteredEvent;
 import lombok.AllArgsConstructor;
@@ -19,12 +20,16 @@ public class WarehouseRegisteredListener {
     public void onEvent(WarehouseRegisteredEvent event) {
         log.debug("Received WarehouseRegistered event: warehouseId={}, type={}",
                 event.getWarehouseId(), event.getWarehouseType());
-        useCase.execute(
-                event.getWarehouseId(),
-                event.getName(),
-                event.getLocation(),
-                event.getWarehouseType()
-        );
-        log.debug("WarehouseRegistered processed successfully: warehouseId={}", event.getWarehouseId());
+        try {
+            useCase.execute(
+                    event.getWarehouseId(),
+                    event.getName(),
+                    event.getLocation(),
+                    event.getWarehouseType()
+            );
+            log.debug("WarehouseRegistered processed successfully: warehouseId={}", event.getWarehouseId());
+        } catch (WarehouseAlreadyRegisteredException e) {
+            log.warn("Warehouse already registered, ignoring: warehouseId={}", event.getWarehouseId());
+        }
     }
 }
