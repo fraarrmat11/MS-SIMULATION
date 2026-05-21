@@ -27,7 +27,7 @@ class WarehouseRegisteredListenerTest {
 
     @Test
     void shouldDelegateEventToUseCase() {
-        WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(UUID.randomUUID(), "test", new Location(1, 1), WarehouseType.FACTORY);
+        WarehouseRegisteredEvent event = new WarehouseRegisteredEvent(UUID.randomUUID(), "test", new Location(1, 1), "FACTORY");
 
         listener.onEvent(event);
 

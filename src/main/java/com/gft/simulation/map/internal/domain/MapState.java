@@ -30,7 +30,7 @@ public class MapState {
             throw new TruckNotFoundException(truckId);
     }
 
-    public void registerWarehouse(UUID warehouseId, String name, Location location, WarehouseType warehouseType) {
+    public void registerWarehouse(UUID warehouseId, String name, Location location, String warehouseType) {
         if (warehouses.containsKey(warehouseId))
             throw new WarehouseAlreadyRegisteredException(warehouseId);
         warehouses.put(warehouseId, new WarehousePosition(warehouseId, name, location, warehouseType));

@@ -4,7 +4,6 @@ import com.gft.simulation.map.internal.application.port.out.WarehousePositionPor
 import com.gft.simulation.map.internal.application.service.MapStateHolder;
 import com.gft.simulation.map.internal.domain.Location;
 import com.gft.simulation.map.internal.domain.WarehousePosition;
-import com.gft.simulation.map.internal.domain.WarehouseType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class RegisterWarehouseUseCase {
     private final WarehousePositionPort warehousePositionPort;
 
     @Transactional
-    public void execute(UUID warehouseId, String name, Location location, WarehouseType warehouseType) {
+    public void execute(UUID warehouseId, String name, Location location, String warehouseType) {
         log.info("Registering warehouse: warehouseId={}, type={}", warehouseId, warehouseType);
         holder.get().registerWarehouse(warehouseId, name, location, warehouseType);
         warehousePositionPort.save(new WarehousePosition(warehouseId, name, location, warehouseType));
