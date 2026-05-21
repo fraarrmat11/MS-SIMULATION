@@ -15,9 +15,7 @@ public class ClockRabbitMQConfig {
 
     @Bean
     public TopicExchange timeExchange() {
-        TopicExchange exchange = new TopicExchange(EXCHANGE);
-        exchange.setShouldDeclare(false);
-        return exchange;
+        return new TopicExchange(EXCHANGE);
     }
 
     @Bean
