@@ -1,11 +1,15 @@
 package com.gft.simulation.map.internal.infrastructure.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MapRabbitMQConfig {
+
+    @Value("${rabbitmq.declare-external-exchanges:false}")
+    private boolean declareExternalExchanges;
 
     public static final String TRUCK_REGISTERED_ROUTING_KEY = "truck.registered.v1";
     public static final String TRUCK_POSITION_UPDATED_ROUTING_KEY = "truck.position.updated.v1";
@@ -19,12 +23,16 @@ public class MapRabbitMQConfig {
 
     @Bean
     public TopicExchange trucksExchange() {
-        return new TopicExchange("trucks.exchange");
+        TopicExchange exchange = new TopicExchange("trucks.exchange");
+        exchange.setShouldDeclare(declareExternalExchanges);
+        return exchange;
     }
 
     @Bean
     public TopicExchange warehousesExchange() {
-        return new TopicExchange("warehouses.exchange");
+        TopicExchange exchange = new TopicExchange("warehouses.exchange");
+        exchange.setShouldDeclare(declareExternalExchanges);
+        return exchange;
     }
 
     @Bean
