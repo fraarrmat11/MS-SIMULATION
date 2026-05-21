@@ -18,5 +18,8 @@ spring:
     ssl:
       enabled: false
 
+rabbitmq:
+  declare-external-exchanges: true
+
   liquibase:
     enabled: false
